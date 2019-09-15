@@ -1,4 +1,4 @@
-# CSE learning notes
+# CSE lecture notes
 
 ## Lecture 1  Introduction - System Complexity
 
