@@ -1,6 +1,6 @@
 # 编译原理学习笔记
 
-## 第一章 绪论
+## 第 1 章 绪论
 
 + **直线式程序** (straight-line program) 语言：有语句和表达式，但是没有循环和 if 语句，比如：
 
@@ -41,4 +41,37 @@
 
   避免执行两次 `f` 带来预料之外的错误。
 
-##### Last-modified date: 2019.9.12, 9 p.m.
+## 第 2 章 词法分析
+
++ 两条重要的消除二义性的规则：最长匹配，规则优先。
+
+### 正则表达式 => NFA
+
+五种基本转换：
+
++ for ε
++ for input a
++ for AB
++ for A | B
++ for A*
+
+### NFA => DFA
+
++ 先确定 DFA 的 start state：NFA 的 start state + 从该 start state 出发经过 ε 可到达的 state。
++ 在确定 DFA 的其他 state：从 DFA 的 start state 群中任一 state 出发，经过某 transition 和任意数量的 ε 可到达的 state。
+
+### 用 ㅣ，ㅜ，ㅗ 做词法分析
+
++ ㅣ 表示当前 lexeme 的起始位置
++ ㅜ 表示遇到的最后一个 final state 的位置
++ ㅗ 表示当前扫描到的位置
+
+开始新一轮扫描后，ㅣ不变，ㅜ，ㅗ 往前扫描，遇到 final state，ㅜ 停下，ㅗ 继续往前扫描，再遇到 final state，更新 ㅜ 位置，ㅗ 继续往前扫描，直到在状态机图中走不通为止，将ㅣ，ㅗ 都置于 ㅜ 所在的位置。
+
+### Lab 2: Lexical Analysis
+
++ ctrl + A （^A）对应的 ascii 码是 1，^B 是 2，以此类推。
++ atoi 的参数的第一个字符似乎要求是数字或者正负号，不然会转换失败，至少第一个字符是 `\` 不行。
++ `"{digit}"` 匹配由这七个字符本身构成的字符串，`{digit}` 匹配 0 ~ 9 （如果前面定义了的话）
+
+##### Last-modified date: 2019.9.20, 10 p.m.
