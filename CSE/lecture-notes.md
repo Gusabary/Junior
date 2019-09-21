@@ -65,5 +65,13 @@ path -> inode number
 
 ### Symbolic link layer
 
-##### Last-modified date: 2019.9.13, 3 p.m.
+## Lecture 3  File System API
+
+## Lecture 4  Disk I/O
+
++ polling -> interrupts -> hybrid
++ DMA
++ PIO / Memory-mapped I/O
+
+##### Last-modified date: 2019.9.21, 1 p.m.
 
