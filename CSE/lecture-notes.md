@@ -73,5 +73,30 @@ path -> inode number
 + DMA
 + PIO / Memory-mapped I/O
 
-##### Last-modified date: 2019.9.21, 1 p.m.
+## Lecture 5  File System Design
+
++ FFS  Cylinder group
++ New Storage and Media
+
+## Lecture 6  Crash Consistency
+
+### MTTF & Availability
+
++ MTBF = MTTF + MTTR
++ MTTF 和 Availability 是相互正交的两个概念，可以 MTTF 很大而 Availability 很小，也可以 MTTF 很小而 Availability 很大。
+
+### Redundancy
+
++ Coding - Hamming Distance
++ Replication
++ Voting - NMR (N-modular redundancy)
++ Repair
+
+### Magnetic disk fault tolerance
+
++ RAID
+
+### FSCK
+
+##### Last-modified date: 2019.9.29, 3 p.m.
 
