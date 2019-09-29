@@ -24,4 +24,36 @@
 
 + 暑假大作业的项目，我觉得是适用的，因为进度风险巨大，不得不放弃一些功能十分强大但学习成本很高的工具，而且一些 corner case 也没有办法考虑得尽善尽美。
 
-##### Last-modified date: 2019.9.21, 4 p.m.
+## Reading 2  Fast File System
+
++ old file system 在用过一段时间以后性能下降很多，从每秒传送 175 KB 下降到每秒传送 30 KB。
+
++ 磁盘中数据的存储过于碎片化。
+
++ + Optimizing Storage Utilization：
+
+    old file system 难以在 block 的大小上做权衡，将一个 block 分成多个 fragment 可以有效地解决存储大文件和小文件的问题。
+
+  + File System Parameterization：
+
+    old file system 忽略了底层硬件的参数，parameterization 可以针对不同的处理器能力和硬件特性给出最优配置。
+
+  + Layout Policies：
+
+    将相关的数据放在一起提高 locality 以减少寻道时间并实现大数据的传送。
+
++ + Optimizing Storage Utilization：
+
+    当 free blocks 很少的时候该优化方法效率会下降。
+
+  + File System Parameterization：
+
+    当硬件移动到另一个参数化的文件系统中时，有可能会出现参数不匹配的状况，会导致吞吐量急剧下降。
+
+  + Layout Policies：
+
+    对于维持较多 free space 的文件系统来说，该优化用到的哈希算法不具备性能优势。
+
++ 缓存需要频繁读写的 inode table。
+
+##### Last-modified date: 2019.9.29, 11 a.m.
