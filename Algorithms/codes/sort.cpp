@@ -1,10 +1,11 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
+#include <queue>
 
 // length of array to be sorted
 // note: the first element is located at index 1, rathen than 0
-const int LENGTH = 100000;
+const int LENGTH = 2 << 20;
 
 // return a random integer number in [start, end)
 int getRandomNum(const int start, const int end);
@@ -15,19 +16,23 @@ void mergeSort(const std::vector<int> constArray);
 void merge(std::vector<int> &array, const int start, const int span);
 void quickSort(const std::vector<int> constArray);
 void subQuickSort(std::vector<int> &array, const int start, const int end);
+void nonRecursiveQuickSortWithQueue(const std::vector<int> constArray);
+void nonRecursiveQuickSortWithVector(const std::vector<int> constArray);
 
 int main() {
     srand(time(NULL));
 
     std::vector<int> array = std::vector<int>(LENGTH + 1);
     for (int i = 1; i <= LENGTH; i++) {
-        array[i] = getRandomNum(0, 100000);
+        array[i] = getRandomNum(0, 10000);
     }
 
     heapSort(array);
-    shellSort(array);
+    //shellSort(array);
     mergeSort(array);
     quickSort(array);
+    nonRecursiveQuickSortWithQueue(array);
+    nonRecursiveQuickSortWithVector(array);
 
     system("pause");
     return 0;
@@ -200,4 +205,74 @@ void subQuickSort(std::vector<int> &array, const int start, const int end) {
     array[left] = array[0];
     subQuickSort(array, start, left - 1);
     subQuickSort(array, right + 1, end);
+}
+
+void nonRecursiveQuickSortWithQueue(const std::vector<int> constArray) {
+    std::vector<int> array = constArray;
+    clock_t start = clock();
+
+    std::queue<std::pair<int, int>> q;
+    q.push(std::pair<int, int>(1, LENGTH));
+
+    while (!q.empty())
+    {
+        std::pair<int, int> cnt = q.front();
+        q.pop();
+        if (cnt.first >= cnt.second)
+            continue;
+        array[0] = array[cnt.first];
+        int left = cnt.first;
+        int right = cnt.second;
+        while (left < right) {
+            while (left < right && array[right] >= array[0]) {
+                right--;
+            }
+            array[left] = array[right];
+            while (left < right && array[left] <= array[0]) {
+                left++;
+            }
+            array[right] = array[left];
+        }
+        array[left] = array[0];
+        q.push(std::pair<int, int>(cnt.first, left - 1));
+        q.push(std::pair<int, int>(right + 1, cnt.second));
+    }
+
+    clock_t end = clock();
+    std::cout << std::endl << "Time consumed: " << end - start << "ms" << std::endl;
+}
+
+void nonRecursiveQuickSortWithVector(const std::vector<int> constArray) {
+    std::vector<int> array = constArray;
+    clock_t start = clock();
+
+    std::vector<std::pair<int, int>> q = std::vector<std::pair<int, int>>(2<<20);
+    q.push_back(std::pair<int, int>(1, LENGTH));
+
+    while (!q.empty())
+    {
+        std::pair<int, int> cnt = q.front();
+        q.pop_back();
+        if (cnt.first >= cnt.second)
+            continue;
+        array[0] = array[cnt.first];
+        int left = cnt.first;
+        int right = cnt.second;
+        while (left < right) {
+            while (left < right && array[right] >= array[0]) {
+                right--;
+            }
+            array[left] = array[right];
+            while (left < right && array[left] <= array[0]) {
+                left++;
+            }
+            array[right] = array[left];
+        }
+        array[left] = array[0];
+        q.push_back(std::pair<int, int>(cnt.first, left - 1));
+        q.push_back(std::pair<int, int>(right + 1, cnt.second));
+    }
+
+    clock_t end = clock();
+    std::cout << std::endl << "Time consumed: " << end - start << "ms" << std::endl;
 }
