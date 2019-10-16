@@ -1,6 +1,6 @@
 # CSE reading notes
 
-## Reading 1  Worse Is Better
+## [Reading 1  Worse Is Better](<https://ipads.se.sjtu.edu.cn/courses/cse/paper/paper-1.html>)
 
 + worse is better 的哲学就是简单是最重要的，为了简单，正确性、一致性以及完整性都可以做出一些让步。
 
@@ -24,7 +24,7 @@
 
 + 暑假大作业的项目，我觉得是适用的，因为进度风险巨大，不得不放弃一些功能十分强大但学习成本很高的工具，而且一些 corner case 也没有办法考虑得尽善尽美。
 
-## Reading 2  Fast File System
+## [Reading 2  Fast File System](<https://ipads.se.sjtu.edu.cn/courses/cse/paper/paper-2.html>)
 
 + old file system 在用过一段时间以后性能下降很多，从每秒传送 175 KB 下降到每秒传送 30 KB。
 
@@ -56,4 +56,20 @@
 
 + 缓存需要频繁读写的 inode table。
 
-##### Last-modified date: 2019.9.29, 11 a.m.
+## [Reading 3  Optimistic Crash Consistency](<https://ipads.se.sjtu.edu.cn/courses/cse/paper/paper-3.html>)
+
++ 将对磁盘写操作的有序性和持久性解耦，在保证有序的前提下实现性能优化。
+
++ Asynchronous Durability Notification 是指这样一种机制：磁盘会通知上层用户某个写操作已经完成并且可以确保会被持久化。
+
+  有了 Asynchronous Durability Notification 的机制，接收到写操作请求的通知和写操作完成的通知可以解耦，提升了上层 I/O 的并发能力，为实现 OptFS 提供更好的基础。
+
++ osync() 保证了写操作的有序性，osync() 之前的写操作一定比之后的写操作先完成。
+
+  应用场景：需要保证写操作有序性的应用，如文中提到的 Gedit 的原子性更新以及 SQLite 数据库的日志。
+
+  dsync() 保证了写操作的持久性，dsync() 之前的写操作在 dsync() 返回时一定已经被持久化了。
+
+  应用场景：需要将写操作立即同步到磁盘的应用，如某些分布式存储系统 transaction 信息在多台机器之间不共享，为了保证数据的一致性必须将写操作立即同步到磁盘。
+
+##### Last-modified date: 2019.10.16, 5 p.m.
