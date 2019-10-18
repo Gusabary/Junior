@@ -178,6 +178,11 @@
 + 为了记录单词在源程序中的位置，语法分析器应当同语义值栈一起维护着一个位置栈。Bison 能够做到这一点，但 Yacc 不能，一种解决方法是手动定义一个非终结符 pos，且 `pos->ε`。
 + Tiger 抽象语法中 pos 的选择可以根据个人的喜好。
 
+### Lab 3: Parsing
+
++ typedec 和 fundec 可能是因为递归所以才需要 list
++ 在 `tiger.y` 中添加 `%debug` 可以开启调试模式
+
 ## 第 5 章  语义分析
 
 ### 符号表
@@ -214,4 +219,4 @@ Semant 模块：trans 函数
 
 在 Tiger 中，声明只出现在 let 表达式中。
 
-##### Last-modified date: 2019.10.17, 2 p.m.
+##### Last-modified date: 2019.10.18, 9 p.m.
