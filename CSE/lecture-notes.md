@@ -17,7 +17,7 @@
 
 Seven layers abstraction
 
-![](./images/image1.png)
+![](./images/fs1.png)
 
 ### Block layer
 
@@ -37,7 +37,7 @@ inode number -> inode
 
 + inode number is the *index* of inode table
 
-  ![](./images/image2.png)
+  ![](./images/fs2.png)
 
 ### File name layer
 
@@ -98,5 +98,125 @@ path -> inode number
 
 ### FSCK
 
-##### Last-modified date: 2019.9.29, 3 p.m.
+### Logging / Journaling
+
++ D -> Jm -> Jc -> M，在 commit 之前，新 metadata 不会覆盖旧 metadata，可以很方便地回滚。
++ 不 flush -> probabilistic crash consistency，但是在某些 workload 下会有问题，有两种方案：
+  + checksum，可以去掉第一个 checksum
+  + delayed writes，可以去掉第二个 checksum
+
+## Lecture 7  RPC & NFS
+
+### RPC
+
++ stub
++ UDP header
++ marshal / unmarshal
+
+### NFS
+
++ file handler
+  + file system identifier
+  + inode number
+  + generation number
++ stateless on NFS server
+
+## Lecture 8  GFS
+
++ Master does not use any per-directory data structures
++ Contains chunks (blocks, each 64MB) of a fixed size
+
+### read
+
+<div>
+    <img src="images/gfs-read.png" width="45%" />
+</div>
+
+### write
+
+<div>
+    <img src="images/gfs-write1.png" width="45%" />
+    <img src="images/gfs-write2.png" width="45%" />
+</div>
+
+## Lecture 9  CDN & DNS
+
+## Lecture 10  Introduction to Network and Link Layer
+
+![](./images/network1.png)
+
+![](./images/network2.png)
+
+### Application Layer
+
++ Entities: client and server
++ Namespace: URL
+
+### Transport Layer
+
++ Entities: sender and receiver
+
++ Namespace: port
+
++ TCP: Retransmit packet if lost
+
+  UDP: Nothing
+
+  ![](./images/tcp-udp.jpg)
+
+### Network Layer
+
++ Entities: gateway, bridge, router...
++ Namespace: IP address
++ What to care: next hop decided by route table
+
+![](./images/ip.png)
+
+### Link Layer
+
++ Entities: hub, switcher, twisted line, cable line...
++ Namespace: no name needed
++ What to care: physical transfer, error detection
+
+### Link Layer Detail
+
+#### Physical transmission
+
+- parallel transmission
+- serial transmission
+- VCO
+- Manchester Code 0 -> 01, 1 -> 10
+
+#### Multiplexing the link
+
+- Isochronous communication
+- Asynchronous communication
+
+#### Framing bits & bit sequence
+
++ Choose a pattern of bits, e.g., 7 one-bits in a row, as a frame-separator (where a frame
+  begins and ends)
++ Bit stuffing: if data contains 6 ones in a row, then add an extra bit 0
+
+#### Detecting transmission errors
+
++ fault tolerancy -> redundancy
+  + simple parity check (2 bits -> 3 bits)
+  + 4 bits -> 7 bits
+
+#### Providing a useful interface to the up layer
+
+## Lecture 11  Network Layer
+
++ IP: Best-effort Network
+
+![](./images/network-layer.png)
+
+### NAT
+
++ Network Address Translation
+
+  ![](./images/nat.png)
+
+##### Last-modified date: 2019.10.21, 7 p.m.
 
