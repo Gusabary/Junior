@@ -218,5 +218,38 @@ path -> inode number
 
   ![](./images/nat.png)
 
-##### Last-modified date: 2019.10.21, 7 p.m.
+## Lecture 12  Network Layer: Routing
+
++ 为了实现冲突检测，包的最小长度要满足接收这个包的时间大于包传递的最大延迟，这样即可保证在一个包发出和接收的两个时刻之间没有其他包被发出。
++ 路由器和交换机的区别：
+  + 路由器：网络层，IP 地址，不同网段
+  + 交换机：链路层，MAC 地址，同一网段
++ IP 地址和 MAC 地址的区别：IP 地址本质上是终点地址，它在跳过路由器（hop）的时候不会改变（NAT 除外），而 MAC 地址则是下一跳的地址，每跳过一次路由器都会改变。
+
+### ARP
+
++ Address Resolution Protocal
++ Name mapping: IP address <-> MAC address
++ ARP Spoofing / Man-in-the-Middle Attack: 污染 ARP cache，使得包被发往错误的 MAC 地址。
+
+### Routing
+
+构建路由表的两种方法：
+
++ Link-state Routing： 告诉所有节点自己到邻居的距离（只需要告诉一次就能在每个节点构建出网络拓扑）
++ Distance-vector Routing： 告诉邻居节点自己到所有节点的当前距离（当前距离是指可能会经过多次更新，路由表才会到达最优状态）
+
+#### Problem of Infinity
+
+由于 Distance-vector Routing 方法中不同节点的传播顺序不同，有可能会造成明明两个节点之间的网络已经崩了，但是还能通过另一个节点的数据虚假地恢复出来，而且和不可通信的节点之间的距离会不停增大。
+
+Split Horizon 是一个尝试性的解决方案，即如果路由表中的某条记录是某个节点告诉我的，那我就不再把这条记录告诉那个节点，但仍然不能彻底解决这个问题。
+
+#### Scale to Internet
+
++ Path Vector Exchange：不仅告诉邻居自己到所有节点的当前距离，还告诉他们这些距离是经过哪些节点走出来的。
++ Hierarchical Address Assignment：引入层级结构，简化路由表。
++ Topological Addressing：进一步简化路由表，CIDR Notation，子网掩码。
+
+##### Last-modified date: 2019.10.23, 11 p.m.
 
