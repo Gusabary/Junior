@@ -58,7 +58,7 @@
 ### NFA => DFA
 
 + 先确定 DFA 的 start state：NFA 的 start state + 从该 start state 出发经过 ε 可到达的 state。
-+ 在确定 DFA 的其他 state：从 DFA 的 start state 群中任一 state 出发，经过某 transition 和任意数量的 ε 可到达的 state。
++ 再确定 DFA 的其他 state：从 DFA 的 start state 群中任一 state 出发，经过某 transition 和任意数量的 ε 可到达的 state。
 
 ### 用 ㅣ，ㅜ，ㅗ 做词法分析
 
