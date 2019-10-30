@@ -251,5 +251,74 @@ Split Horizon 是一个尝试性的解决方案，即如果路由表中的某条
 + Hierarchical Address Assignment：引入层级结构，简化路由表。
 + Topological Addressing：进一步简化路由表，CIDR Notation，子网掩码。
 
-##### Last-modified date: 2019.10.23, 11 p.m.
+## Lecture 13  End-to-end Layer
+
+### BGP
+
++ Border Gateway Protocal
++ Customer / Provider / Peer
+
+### End-to-end layer
+
++ No "one size fits all": UDP / TCP / RTP
+
+#### Assurance of at-least-once delivery
+
+Remember state at the **sending side**
+
+RTT (Round-trip time) = to_time + process_time + back_time (ack)
+
+How to decide timeout ?
+
++ Fixed timer: Evil
++ Adaptive timer
++ NAK (Negative ACK)
+
+#### Assurance of at-most-once delivery
+
+Maintains a table of nonce at the **receiving side**
+
+Tombstones
+
+#### Assurance of data integrity
+
+data integrity: Receiver gets the same contents as sender
+
+Checksum
+
+#### Assurance of stream order & closing of connections
+
+when out of order: receiving side window
+
+#### Assurance of jitter control
+
+#### Assurance of authenticity and privacy
+
+#### Assurance of end-to-end performance
+
++ Lock-step
+
++ Pipeline
+
+  + Fixed window
+
+  + Sliding window
+
+    window size = round-trip time * bottleneck data rate
+
+### TGP Congestion Control
+
+Network & End-to-end layers share the responsibility for handling congestion
+
+#### AIMD
+
++ Additive Increase, Multiplicative Decrease
+
++ retrofitting: slow start
+
++ AIMD leads to efficiency and fairness
+
+  ![](./images/AIMD.png)
+
+##### Last-modified date: 2019.10.30, 11 a.m.
 
