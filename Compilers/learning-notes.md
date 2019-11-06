@@ -219,4 +219,16 @@ Semant 模块：trans 函数
 
 在 Tiger 中，声明只出现在 let 表达式中。
 
-##### Last-modified date: 2019.10.18, 9 p.m.
+### Lab 4: Type Checking
+
++ 打印错误信息：
+
+  ```c++
+  errormsg.Error(this->pos, "undefined type %s", this->typ->Name().c_str());
+  ```
+
+  不加 `c_str()` 的话直接打印 `std::string` 会出乱码
+
++ fg 的代码用的 for 循环，我用的 while 循环，对于 continue 的情况，for 循环能自动 ++，但是 while 不行（
+
+##### Last-modified date: 2019.11.6, 8 p.m.
