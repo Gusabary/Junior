@@ -320,5 +320,51 @@ Network & End-to-end layers share the responsibility for handling congestion
 
   ![](./images/AIMD.png)
 
-##### Last-modified date: 2019.10.30, 11 a.m.
+## Lecture 14  Transaction
+
+### CAP
+
++ Consistency, Availability, Partition Tolerance
++ P：通常是一个事实
++ C 和 A 并不是 0 或 1 的选择
+
+### All or Nothing: Atomicity
+
++ commit point
+
+#### shadow copy
+
+work well for a single file
+
+#### logging
+
++ Basic operations: begin, write, read, commit, abort
++ 在 all or nothing 的 context 中，不考虑某一个变量还未 commit 就在另一个 transaction 中被写的情况
+
+#### log + cell
+
++ Write-ahead-log protocol: WAL
+
+  log the update before installing it
+
++ recovery: undo，因为 cell 里的数据有可能没有 commit
+
+#### Optimization
+
++ log + cell + cell cache
+
+  recovery: undo + redo，因为 disk cell 里的数据可能没有 commit，也有可能不是最新的
+
++ truncate the log
+
+  + checkpointing
+  + non-quiescent checkpointing
+
++ external synchronous I/O 
+
+  It will not be flushed until something externally visible happens
+
+##### Last-modified date: 2019.11.6, 11 p.m.
+
+
 
