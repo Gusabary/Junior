@@ -30,4 +30,32 @@
 
 + 解析出的 IP 每次都不一样，还是墙的问题。
 
-##### Last-modified date: 2019.10.22, 8 p.m.
+## [Hands-on 2  Write Ahead Log System](<https://ipads.se.sjtu.edu.cn/courses/cse/handson/handson-2.html>)
+
++ 因为 action 2 没有 end
+
++ studentA 1000
+
++ 因为 action 3 的操作没有 end
+
++ studentC: 3100, studentA: 900，因为 action 3 commit 过，在 recover 的时候不会被 undo
+
++ yes
+
++ Losers 是指没有 commit，被 undo 掉的 action
+
+  Winners 是指 commit 过，没有被 undo 的 action
+
+  Done 是指原本就已经 end 过的 action
+
++ 因为 checkpoint 命令不会把数据 install 进 db
+
++ 6 lines，recover 的时候可以不用遍历整个 log
+
++ yes，幂等性
+
++ commit 过的 action 就不会被 undo
+
++ 会将没有 commit 的 action abort 掉
+
+##### Last-modified date: 2019.11.7, 8 p.m.
