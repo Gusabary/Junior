@@ -328,13 +328,13 @@ Network & End-to-end layers share the responsibility for handling congestion
 + P：通常是一个事实
 + C 和 A 并不是 0 或 1 的选择
 
-### All or Nothing: Atomicity
+### All or Nothing
 
 + commit point
 
 #### shadow copy
 
-work well for a single file
++ work well for a single file
 
 #### logging
 
@@ -364,7 +364,48 @@ work well for a single file
 
   It will not be flushed until something externally visible happens
 
-##### Last-modified date: 2019.11.6, 11 p.m.
+## Lecture 15  Before or After
 
++ race condition
+
+### Serializability
+
+![](./images/serializability.png)
+
++ Conflict Graph
+
+  A schedule is conflict serializable if and only if it has an **acyclic** conflict graph
+
++ A schedule is conflict / view serializable if it is conflict / view equivalent to some **serial** schedule
+
++ Conflict Serializability VS. View Serializability
+
+  conflict serializability has practical benefits
+
+### Generate Conflict-Serializability Schedules
+
++ pessimistic: global lock, 2-phase locking
++ optimistic: optimistic concurrency control (OCC)
+
+#### Global Lock
+
++ system-wide locking
+
+#### Simple Locking
+
++ data-wide locking
+
+#### Two-phase Locking
+
++ After transaction releases a lock, it cannot acquire any other locks.
++ 2PL Can Result in Deadlock
+
+#### Optimistic Concurrency Control
+
+1. Concurrent local processing 
+2. Validation in critical section
+3. Commit the results in critical section or abort
+
+##### Last-modified date: 2019.11.7, 10 p.m.
 
 
