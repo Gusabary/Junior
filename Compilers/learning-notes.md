@@ -231,4 +231,41 @@ Semant 模块：trans 函数
 
 + fg 的代码用的 for 循环，我用的 while 循环，对于 continue 的情况，for 循环能自动 ++，但是 while 不行（
 
-##### Last-modified date: 2019.11.6, 8 p.m.
+## 第 6 章  活动记录
+
++ 如果一个变量存储在栈帧中，则称它是**逃逸**的。
++ 每当调用函数 f 时，便传递给 f 一个指针，该指针指向静态包含 f 的那个函数，称这个指针为**静态链**。
+
+![](./images/image1.png)
+
+### Frame 模块
+
++ `F_frame`：栈帧的抽象表示，有关形式参数和分配在栈帧中局部变量的信息。
+
++ `F_access`：描述存放在栈中或寄存器中的形式参数和局部变量。
+
+  可以由 `InFrame()` 和 `InReg()` 构造 `F_access` 对象。
+
++ `F_newFrame()`：返回一个新栈帧。
+
++ `F_allocLocal()`：分配一个新的变量。
+
++ `F_formals()`：返回形式参数的位置（从被调用函数的角度来看）。
+
+### Temp 模块
+
++ `Temp_temp`：临时变量，局部变量的抽象名，暂时保存在寄存器中的值。
++ `Temp_label`：标号，静态存储器地址的抽象名，机器语言中的位置。
+
+### Translate 模块
+
+Translate 模块为 Semant 模块管理着局部变量和静态函数嵌套。
+
++ `Tr_access`：比 `F_access` 多知道一个于静态链相关的信息 (`Tr_level`)
++ `Tr_level`：嵌套层
++ `Tr_newLevel()`：创建新的嵌套层，调用 `F_newFrame()`
++ `Tr_allocLocal()`：在指定的层次中创建变量，调用 `F_allocLocal()`
+
+管理静态链、追踪层次信息
+
+##### Last-modified date: 2019.11.8, 11 a.m.
