@@ -406,6 +406,42 @@ Network & End-to-end layers share the responsibility for handling congestion
 2. Validation in critical section
 3. Commit the results in critical section or abort
 
-##### Last-modified date: 2019.11.7, 10 p.m.
+## Lecture 16  Lock & Memory Model
+
++ Peterson's Algorithms: no use any more due to problem of memory consistency
+
+### Memory Consistency Model
+
++ Strict Consistency：只要某个线程写了，其他所有线程可以立刻读到
+
++ Sequential Consistency：某个线程写了，其他线程可以不用立刻能读到，只要这个顺序看上去和顺序读写的顺序一样就行，考虑了 write 的 latency
+
+  <div>
+      <img src="./images/sequential-consistency1.png" width="49%" />
+      <img src="./images/sequential-consistency3.png" width="49%" />
+  </div>
+
++ Processor Consistency：不同的线程读不同线程写的数据顺序可以不一样，考虑了 network 的 latency
+
+### Atomic Instructions
+
++ atomicity by hardware
++ TestAndSet
++ CompareAndSwap
++ LoadLinked / StoreConditional 
++ FetchAndAdd
+
+### Lock Granularity
+
++ Coarse-grain vs. Fine-grain
+
+### Deadlock
+
++ Lock ordering (pessimistic)
++ Backing out (optimistic)
++ Timer expiration (optimistic)
++ Cycle detection (optimistic)
+
+##### Last-modified date: 2019.11.11, 10 p.m.
 
 
