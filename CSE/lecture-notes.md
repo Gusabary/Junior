@@ -442,6 +442,44 @@ Network & End-to-end layers share the responsibility for handling congestion
 + Timer expiration (optimistic)
 + Cycle detection (optimistic)
 
-##### Last-modified date: 2019.11.11, 10 p.m.
+## Lecture 17  Thread & Condition Variable
+
+### Yield()
+
+1. suspend running thread
+2. choose new thread
+3. resume thread to run
+
+但即使用了 yield，当有很多 sender 在等的时候也会做很多 unnecessary check，所以更好的做法是让 sender 去睡觉
+
+### Conditional Variable
+
+有了 conditional variable，等待的 sender 就可以去睡觉，但是为了让 release-wait-acquire 变成一个原子操作（解决 Lost-notify Problem），把 wait 接口改成可以接受一个 lock 参数，并引入新接口：yield_wait()。
+
+但是因为引入了新状态 WAITING，在 yield_wait() 选择新线程的时候有可能会因找不到 RUNNABLE 的线程而陷入死锁，所以要在 while 循环中放锁再拿锁。
+
+但是在放锁拿锁的间隙，另外一个 CPU 可以来执行同一个线程，这会导致两个 CPU 的栈指针指向同一块内存，一个 CPU 执行完操作更改了栈后，另一个 CPU 的栈指针会被污染，所以要在进入 while 循环前保存当前 CPU 的栈指针，使其指向一个相对私有的内存。
+
+### Preemption
+
+再考虑 preemption 的问题，在拿着 t_lock 的时候即使由于时间片用完被调度走了，别的线程也拿不了锁，所以在拿锁放锁的时候相应地关闭开启 interrupt（注意开关中断和拿放锁的顺序）
+
+但是在放锁拿锁的间隙（while 循环中），也同时是开启中断的间隙，时间片用完被调度走了，当前 CPU 执行另一个线程，另一个线程在 yield_wait() 的第一行会拿到错误的 id，所以要在先前线程进入 while 循环前将其设为 null。
+
+## Lecture 18  Thread Layer & Processor Layer
+
++ Thread Exit:
+
+  ![](./images/thread-processor1.png)
+
++ Context Switch:
+
+  ![](./images/thread-processor2.png)
+
+<div style="text-align:center;">
+    <img src="./images/thread-processor3.png" width="60%" />
+</div>
+
+##### Last-modified date: 2019.11.14, 9 p.m.
 
 
