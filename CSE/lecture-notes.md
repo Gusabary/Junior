@@ -218,5 +218,230 @@ path -> inode number
 
   ![](./images/nat.png)
 
-##### Last-modified date: 2019.10.21, 7 p.m.
+## Lecture 12  Network Layer: Routing
+
++ 为了实现冲突检测，包的最小长度要满足接收这个包的时间大于包传递的最大延迟，这样即可保证在一个包发出和接收的两个时刻之间没有其他包被发出。
++ 路由器和交换机的区别：
+  + 路由器：网络层，IP 地址，不同网段
+  + 交换机：链路层，MAC 地址，同一网段
++ IP 地址和 MAC 地址的区别：IP 地址本质上是终点地址，它在跳过路由器（hop）的时候不会改变（NAT 除外），而 MAC 地址则是下一跳的地址，每跳过一次路由器都会改变。
+
+### ARP
+
++ Address Resolution Protocal
++ Name mapping: IP address <-> MAC address
++ ARP Spoofing / Man-in-the-Middle Attack: 污染 ARP cache，使得包被发往错误的 MAC 地址。
+
+### Routing
+
+构建路由表的两种方法：
+
++ Link-state Routing： 告诉所有节点自己到邻居的距离（只需要告诉一次就能在每个节点构建出网络拓扑）
++ Distance-vector Routing： 告诉邻居节点自己到所有节点的当前距离（当前距离是指可能会经过多次更新，路由表才会到达最优状态）
+
+#### Problem of Infinity
+
+由于 Distance-vector Routing 方法中不同节点的传播顺序不同，有可能会造成明明两个节点之间的网络已经崩了，但是还能通过另一个节点的数据虚假地恢复出来，而且和不可通信的节点之间的距离会不停增大。
+
+Split Horizon 是一个尝试性的解决方案，即如果路由表中的某条记录是某个节点告诉我的，那我就不再把这条记录告诉那个节点，但仍然不能彻底解决这个问题。
+
+#### Scale to Internet
+
++ Path Vector Exchange：不仅告诉邻居自己到所有节点的当前距离，还告诉他们这些距离是经过哪些节点走出来的。
++ Hierarchical Address Assignment：引入层级结构，简化路由表。
++ Topological Addressing：进一步简化路由表，CIDR Notation，子网掩码。
+
+## Lecture 13  End-to-end Layer
+
+### BGP
+
++ Border Gateway Protocal
++ Customer / Provider / Peer
+
+### End-to-end layer
+
++ No "one size fits all": UDP / TCP / RTP
+
+#### Assurance of at-least-once delivery
+
+Remember state at the **sending side**
+
+RTT (Round-trip time) = to_time + process_time + back_time (ack)
+
+How to decide timeout ?
+
++ Fixed timer: Evil
++ Adaptive timer
++ NAK (Negative ACK)
+
+#### Assurance of at-most-once delivery
+
+Maintains a table of nonce at the **receiving side**
+
+Tombstones
+
+#### Assurance of data integrity
+
+data integrity: Receiver gets the same contents as sender
+
+Checksum
+
+#### Assurance of stream order & closing of connections
+
+when out of order: receiving side window
+
+#### Assurance of jitter control
+
+#### Assurance of authenticity and privacy
+
+#### Assurance of end-to-end performance
+
++ Lock-step
+
++ Pipeline
+
+  + Fixed window
+
+  + Sliding window
+
+    window size = round-trip time * bottleneck data rate
+
+### TGP Congestion Control
+
+Network & End-to-end layers share the responsibility for handling congestion
+
+#### AIMD
+
++ Additive Increase, Multiplicative Decrease
+
++ retrofitting: slow start
+
++ AIMD leads to efficiency and fairness
+
+  ![](./images/AIMD.png)
+
+## Lecture 14  Transaction
+
+### CAP
+
++ Consistency, Availability, Partition Tolerance
++ P：通常是一个事实
++ C 和 A 并不是 0 或 1 的选择
+
+### All or Nothing
+
++ commit point
+
+#### shadow copy
+
++ work well for a single file
+
+#### logging
+
++ Basic operations: begin, write, read, commit, abort
++ 在 all or nothing 的 context 中，不考虑某一个变量还未 commit 就在另一个 transaction 中被写的情况
+
+#### log + cell
+
++ Write-ahead-log protocol: WAL
+
+  log the update before installing it
+
++ recovery: undo，因为 cell 里的数据有可能没有 commit
+
+#### Optimization
+
++ log + cell + cell cache
+
+  recovery: undo + redo，因为 disk cell 里的数据可能没有 commit，也有可能不是最新的
+
++ truncate the log
+
+  + checkpointing
+  + non-quiescent checkpointing
+
++ external synchronous I/O 
+
+  It will not be flushed until something externally visible happens
+
+## Lecture 15  Before or After
+
++ race condition
+
+### Serializability
+
+![](./images/serializability.png)
+
++ Conflict Graph
+
+  A schedule is conflict serializable if and only if it has an **acyclic** conflict graph
+
++ A schedule is conflict / view serializable if it is conflict / view equivalent to some **serial** schedule
+
++ Conflict Serializability VS. View Serializability
+
+  conflict serializability has practical benefits
+
+### Generate Conflict-Serializability Schedules
+
++ pessimistic: global lock, 2-phase locking
++ optimistic: optimistic concurrency control (OCC)
+
+#### Global Lock
+
++ system-wide locking
+
+#### Simple Locking
+
++ data-wide locking
+
+#### Two-phase Locking
+
++ After transaction releases a lock, it cannot acquire any other locks.
++ 2PL Can Result in Deadlock
+
+#### Optimistic Concurrency Control
+
+1. Concurrent local processing 
+2. Validation in critical section
+3. Commit the results in critical section or abort
+
+## Lecture 16  Lock & Memory Model
+
++ Peterson's Algorithms: no use any more due to problem of memory consistency
+
+### Memory Consistency Model
+
++ Strict Consistency：只要某个线程写了，其他所有线程可以立刻读到
+
++ Sequential Consistency：某个线程写了，其他线程可以不用立刻能读到，只要这个顺序看上去和顺序读写的顺序一样就行，考虑了 write 的 latency
+
+  <div>
+      <img src="./images/sequential-consistency1.png" width="49%" />
+      <img src="./images/sequential-consistency3.png" width="49%" />
+  </div>
+
++ Processor Consistency：不同的线程读不同线程写的数据顺序可以不一样，考虑了 network 的 latency
+
+### Atomic Instructions
+
++ atomicity by hardware
++ TestAndSet
++ CompareAndSwap
++ LoadLinked / StoreConditional 
++ FetchAndAdd
+
+### Lock Granularity
+
++ Coarse-grain vs. Fine-grain
+
+### Deadlock
+
++ Lock ordering (pessimistic)
++ Backing out (optimistic)
++ Timer expiration (optimistic)
++ Cycle detection (optimistic)
+
+##### Last-modified date: 2019.11.11, 10 p.m.
+
 

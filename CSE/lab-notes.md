@@ -52,5 +52,25 @@ p.s. 这 lab 我估摸着写了真有 24 个小时了。
 
 btw，调试阶段起容器时可以用 `-m 300M` 这样的选项限制容器可使用的内存大小，避免机子垮掉。
 
-##### Last-modified date: 2019.10.13, 10 p.m.
+## Lab 3 Cache for Locks
+
+这个 lab 设计阶段还是挺有意思的，麻烦就麻烦在不知道从哪里冒出来的竞争，需要很仔细很仔细地看代码。
+
+我的设计是 client 和 server 各维护一个 map，client 的 map 是 lock id 到 lock status 状态的映射，server 的 map 是 lock id 到正在排队的 clients 的队列的映射。
+
+当有线程想要拿锁时，会给 client 发 acquire，如果 client 没有锁就去向 server 发 acquire 并将自己排在队列尾部，server 会给他前面的那个人（队列的倒数第二个）发 revoke，client 收到 revoke 后会先看自己这里的锁还有没有人在用，如果没人用就直接归还给 server，如果还有人在用就先记录下 revoke has arrived 这件事情，等用完了再放锁，server 拿到 client 放的锁后会给之前发 acquire 请求的 client 发一个 retry，把锁给他。
+
+当有线程放锁时，会给 client 发 release，client 先查看是否有待处理的 revoke 请求，如果有，立刻将锁归还给 server，如果没有就在自己这放着，等 server 发 revoke，或者有新的线程来申请锁。
+
+有几点需要注意：
+
++ `pthread_cond_signal` 会唤醒由于 `pthread_cond_wait` 而睡过去的线程，但是不会立刻执行，即控制流不一定会转移到被唤醒的线程。
++ 在发 rpc 的时候不要拿着锁，一个解决方法是：进入函数立刻拿锁，发 rpc 之前放锁，rpc 返回立刻拿锁，return 前放锁；在这种情况下需要特别小心，因为一个原本被锁保护的函数的原子性被 rpc 拦腰截断了，有可能发 rpc 发着发着去执行别的线程了，执行了很久才回来继续执行这个函数。
++ `pthread_cond_wait(&(lock_manager.find(lid)->second), &mtx);` 这种写法会在睡觉前放锁，醒来后拿锁（且这些操作是具有原子性的）
++ `yfs_client` 里面没替换成 `lock_client_cache` 前，`./start.sh` 再 `ls` 没反应。
++ `RPC_LOSSY` 的意思是丢包率，但是由于 TCP 协议的存在，丢包的情况并不需要手动重发，只是要考虑包的顺序可能和预期的不一致。（但是一般 `RPC_LOSSY=0` 能过 `RPC_LOSSY=5` 也就能过了
+
+> 多线程调试有几个重要的方法，仔细地阅读自己的代码，多打印些信息。 —— Veiasai
+
+##### Last-modified date: 2019.11.3, 4 p.m.
 
