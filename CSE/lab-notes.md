@@ -72,5 +72,19 @@ btw，调试阶段起容器时可以用 `-m 300M` 这样的选项限制容器可
 
 > 多线程调试有几个重要的方法，仔细地阅读自己的代码，多打印些信息。 —— Veiasai
 
-##### Last-modified date: 2019.11.3, 4 p.m.
+## Lab 4 Cache for Data
+
+这个 lab 也还算有意思，一开始我感觉挺简单的，但是写到后面还是有不少细节。
+
+最开始我的设计是第一次 get 去向 server 拿，然后之后的每一次 get 拿的都是 cache 里的数据，但是对于每一次 write，都要写穿到 server 并且 server 要通知所有缓存了这一项数据的 client 更新他们的 cache。这乍一听没什么问题，get 数量远远多于 write，优化 get 的收益更大，但是效果是 rpc 的数量只降到了 2000+ （原来 11000+），虽然还是挺明显的，但是离十分之一的要求还有些距离。
+
+后来我发现了 yfs_client 中给 extent_client 的请求只有固定的几种模式，比如 create->get->put 这种情况，我是 create 和 put 都发了 rpc，但是完全可以把他们合并成一次，经过一番操作以后，确实降到了十分之一。
+
+有几点需要注意：
+
++ yfs_client 持有 extent_client 和 lock_client 两个需要接受 rpc 的实例，为他们分配端口时设置随机种子要不一样。
++ 如果引入了新文件 extent_client_cache, extent_server_cache，要把它们添加到 GNUMakefile 中。
++ rpc 一次最好不要发送太多数据。
+
+##### Last-modified date: 2019.11.17, 10 p.m.
 
