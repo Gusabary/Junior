@@ -1,0 +1,7 @@
+newmtl MatchMat
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+illum 2
+Ns 8
+map_Kd match.tga
