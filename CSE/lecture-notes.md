@@ -479,7 +479,39 @@ Network & End-to-end layers share the responsibility for handling congestion
 <div style="text-align:center;">
     <img src="./images/thread-processor3.png" width="60%" />
 </div>
+## Lecture 19  Atomicity across Multiple Sites
 
-##### Last-modified date: 2019.11.14, 9 p.m.
+client + coordinator + two servers
+
+### Two-phase Commit
+
++ phase-1: preparation / voting：Lower layer 准备就绪
++ phase-2: commitment：Higher layer 确认 commit
+
+可以嵌套，higher layer 可以是更上层的 lower layer
+
+3N messages
+
+### Replication Consistency
+
+#### Optimistic Replication
+
+use timestamps
+
+Time measuring: measure time intervals (fixed-frequency oscillator)
+
+Synchronize a clock over the Internet: NTP, but need to take into account network latency
+
+There exists a principle: time never goes backwards
+
+File Reconciliation
+
+Vector Timestamps
+
+#### Pessimistic Replication
+
+Quorum: Qr + Qw > Nreplicas
+
+##### Last-modified date: 2019.11.25, 11 p.m.
 
 
