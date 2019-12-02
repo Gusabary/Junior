@@ -479,7 +479,7 @@ Network & End-to-end layers share the responsibility for handling congestion
 <div style="text-align:center;">
     <img src="./images/thread-processor3.png" width="60%" />
 </div>
-## Lecture 19  Atomicity across Multiple Sites
+## Lecture 19  Distributed Transaction
 
 client + coordinator + two servers
 
@@ -512,6 +512,62 @@ Vector Timestamps
 
 Quorum: Qr + Qw > Nreplicas
 
-##### Last-modified date: 2019.11.25, 11 p.m.
+## Lecture 20  RSM & PAXOS
+
+There still exists a problem: Clients' requests to different servers can arrive in different order.
+
+### RSM
+
+Replicated State Machines
+
+RSM 的核心在于 replica 的起始状态、输入顺序都是一样的，输入都是确定的，所以最终也能达到共同的状态，Primary / Backup Model 只是 RSM 使用的一个 mechanism：Primary 确定所有 non-deterministic 的值并将某一执行顺序发送给所有 backup，这样 backup 即满足 RSM 的核心要求。
+
+What if Primary fails? -> Coordinator knows about both primary and backup, and decides which to use? -> split brain: Multiple coordinators + Network partition = Problem
+
+So introduce View Server
+
+Primary in view `i` must have been primary or backup in view `i-1` （传承）
+
+### PAXOS
+
+rounds and phases are asynchronous
+
+不保证 termination
+
+#### phase 0: request
+
+<div>
+    <img src="./images/paxos0.png" width="45%" />
+</div>
+
+#### phase 1: proposal -> promise
+
+<div>
+    <img src="./images/paxos1a.png" width="45%" />
+    <img src="./images/paxos1b.png" width="45%" />
+</div>
+
+#### phase 2: accept
+
+如果在 phase 1b 收到的所有 promise 都不含 value，则 leader 可以自己指定一个 value
+
+否则，accept request 中的 value 必须是 promise 中最大 N 对应的那个 value
+
+<div>
+    <img src="./images/paxos2a.png" width="45%" />
+    <img src="./images/paxos2b.png" width="45%" />
+</div>
+
+#### phase 3: learn
+
+<div>
+    <img src="./images/paxos3.png" width="45%" />
+</div>
+
+### Paxos for RSM
+
+Paxos 可以用来保证 RSM 中多个 View Server 之间的一致性。
+
+##### Last-modified date: 2019.12.2, 12 p.m.
 
 
