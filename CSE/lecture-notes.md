@@ -568,6 +568,28 @@ rounds and phases are asynchronous
 
 Paxos 可以用来保证 RSM 中多个 View Server 之间的一致性。
 
-##### Last-modified date: 2019.12.2, 12 p.m.
+## Lecture 21  P2P & Blockchain
+
+### P2P Network
+
+BitTorrent: Tracker, Seeder, Peer
+
+But rely on tracker, cannot scale to large numbers of torrents
+
+Scalable lookup: Distributed Hash Table (DHT):
+
++ Simple lookup: O(N)
++ Finger Table: O(logN)
+
+But failure may cause incorrect lookup, solution: successor lists
+
+### Bitcoin & Blockchain
+
++ Smart Contract: The nodes not only store transactions, but also code
++ Permission Chain: Bitcoin is a permission-less chain
+
+##### Last-modified date: 2019.12.2, 2 p.m.
+
+
 
 
