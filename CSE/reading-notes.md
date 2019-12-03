@@ -86,4 +86,23 @@
 + checksum 可以由 application 层级来加
 + 不同用户的权限可以由 application 层级来控制
 
-##### Last-modified date: 2019.10.30, 2 p.m.
+## [Reading 5  Eraser](<https://ipads.se.sjtu.edu.cn/courses/cse/paper/paper-5.html>)
+
++ 当某个变量进入了 Shared-Modified state 并且其 candidate set 为空时，会发出警告，因为在这种情况下意味着这个变量被多个线程读写，且没有用锁进行保护。
+
++ false positive：
+
+  + Memory Reuse：memory 被 reuse，但是 shadow memory 没有 reset，导致某个变量匹配到了错误的 lockset index。
+  + Private Locks：对锁进行操作时 Eraser 并不知道这件事。
+  + Benign Races：有些 data race 不影响程序的正确性。
+
+  false negative：
+
+  + interrupt level：这种情况不需要使用锁，尽管 Eraser 引入了对 interrupt level 的支持。
+  + post/wait style：例如使用信号量作为同步手段时，因为其不被任何线程“持有”，所以难以推断某个信号量究竟保护的是什么变量。
+
++ Eraser 本质上是在检查程序有没有违反 locking discipline，这与调度的顺序无关。
+
++ 当在不同的地方用不同的锁保护同一个变量时，Eraser 最终会判定为没有锁保护这个变量，这种情况该如何处理。
+
+##### Last-modified date: 2019.12.3, 9 p.m.
