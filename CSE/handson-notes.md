@@ -58,4 +58,23 @@
 
 + 会将没有 commit 的 action abort 掉
 
-##### Last-modified date: 2019.11.7, 8 p.m.
+## [Hands-on 3  Load Balance and Reverse Proxy](<https://ipads.se.sjtu.edu.cn/courses/cse/handson/handson-3.html>)
+
++ 当负载不断增大时，吞吐量不再上升甚至会下降。
+
+  ![](./handson-3/2.png)
+
++ 用 nginx 做负载均衡，减少 latency
+
+  ![](./handson-3/4.png)
+
++ 提升 replica 数量，但是需要 redis 维护 session 信息，可能会提高 latency
+
+  ![](./handson-3/5.png)
+
++ 限制 CPU 为 0.5，latency 提高了
+
+  ![](./handson-3/6.png)
+
+##### Last-modified date: 2019.12.16, 12 p.m.
+
