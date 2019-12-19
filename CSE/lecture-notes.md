@@ -588,7 +588,80 @@ But failure may cause incorrect lookup, solution: successor lists
 + Smart Contract: The nodes not only store transactions, but also code
 + Permission Chain: Bitcoin is a permission-less chain
 
-##### Last-modified date: 2019.12.2, 2 p.m.
+## Lecture 22  System Performance
+
+Buy new hardware - Moore's Law
+
+Why performance bottleneck?
+
+1. physical limitation
+2. sharing
+
+How to improve performance?
+
+1. measure the system, find the bottleneck
+2. relax the bottleneck
+
+### Performance Matrics
+
++ Capacity
++ Latency
++ Throughput
++ Utilization
+
+How to improve throughput? Reduce latency & Increase paralleling
+
+How to improve latency:
+
++ Fast Path: Make the common case faster (like cache)
++ Concurrency
++ Overlapping, prefetching
+
+## Lecture 23  Fighting bottlenecks
+
+### Batching
+
+Dallying: procrastination sometimes helps
+
++ write absorption (write back)
++ group commit
+
+### Caching
+
+make common case faster
+
+### Concurrency
+
+Speculation, but need to be able to undo changes if wrong
+
+### Parallelism
+
+Out-of-order execution
+
+### Case: I/O Bottleneck
+
+Optimization: prefetch -> batch write -> overlap computation and I/O
+
+### Cache policies
+
+FIFO, but has Belady's anomaly
+
+OPT, LRU, Clock algorithm
+
+### Scheduling
+
++ FCFS, SJF, Round-Robin
++ Priority Scheduling Policy
+  + high priority for I/O-bound jobs
+  + low priority for CPU-bound jobs
+  + priority inheritance
++ Earliest Deadline First
++ Disk scheduling:
+  + First-come, first serve
+  + Elevator algorithm
+  + Shortest-seek first
+
+##### Last-modified date: 2019.12.19, 2 p.m.
 
 
 
