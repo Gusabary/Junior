@@ -661,7 +661,90 @@ OPT, LRU, Clock algorithm
   + Elevator algorithm
   + Shortest-seek first
 
-##### Last-modified date: 2019.12.19, 2 p.m.
+## Lecture 24  Security Introduction
+
++ Why is Security so hard? --Because Security is a negative goal.
++ Why not using fault tolerant techniques?
+  1. result may be too much, cannot afford once
+  2. failures due to attacks may be highly correlated
+
+### Policy: Goals
+
+Security goals:
+
++ Confidentiality: who can read
++ Integrity: who can write
+
+Liveness goals:
+
++ Availability: ensure service keep operating
+
+### Threat Model: Assumptions
+
+### Guard Model
+
++ Complete Mediation
++ Authentication and Authorization
++ principle of least privilege
+
+## Lecture 25  Authentication
+
+Trusted is bad.
+
+Good design has few trusted components.
+
+TCB: Trust Computing Base 信任基，必须要相信的东西
+
+policy: high level
+
+mechanism: low level
+
+### Case: Password
+
+guess password: Page-fault means first char is OK -- Timing Attack
+
+solution: store hash of password
+
+but adversary can guess using rainbow table
+
+solution: salting
+
+## Lecture 26  Secure Channel & Local Security
+
+### Secure Channel
+
+adversary in the network can observe, corrupt, inject and drop packets
+
+<div style="text-align:center;">
+    <img src="./images/encrypt-mac.png" width="60%" />
+    <br />
+    <br />
+    <img src="./images/encrypt-mac2.png" width="80%" />
+</div>
+
+but there exists replay attacks - solution: add seq number
+
+but there still exists reflection attacks - solution: use different keys for Alice and Bob
+
+how do the parties know the keys? - Diffie-Hellman Key Exchange
+
+but there still exists man-in-the-middle attack - solution: RSA Algorithm
+
+Symmetric key encryption vs. Asymmetric key encryption
+
+Certificate Authorities
+
+### Local Security
+
+### Taint Tracking
+
+The lifetime of sensitive data should be minimized. --data exposure
+
+比如将用户的输入标记为 taint，凡是被 taint 赋值过的变量也标记为 taint
+
+taint check: seed -> tracker -> assert，性能下降 37.2x
+
+##### Last-modified date: 2019.12.19, 4 p.m.
 
 
 
