@@ -744,7 +744,40 @@ The lifetime of sensitive data should be minimized. --data exposure
 
 taint check: seed -> tracker -> assert，性能下降 37.2x
 
-##### Last-modified date: 2019.12.19, 4 p.m.
+## Lecture 27  ROP & CFI
+
+### ROP
+
+Stack buffer overflow -> Defense: DEP (Data Execution Prevention)
+
+Code Reuse Attack / ROP (Return-oriented programming) -> Defense: 
+
++ Hide the binary file
++ ASLR (Address Space Layout Randomization)
++ Canary
+
+### CFI
+
+Control Flow Integrity
+
+pre-determine control flow graph (CFG) of an application
+
+improvement: shadow call stack
+
+## Lecture 28  Minimize TCB
+
+monolithic kernel vs. micro kernel:
+
+<div>
+    <img src="./images/monolithic-kernel.png" width="48%" />
+    <img src="./images/micro-kernel.png" width="48%" />
+</div>
+
+*(blue components are in user space while red ones are in kernel space)*
+
+TPM: Trusted Platform Module, Root of Trust
+
+##### Last-modified date: 2019.12.23, 2 p.m.
 
 
 
