@@ -442,6 +442,343 @@ Network & End-to-end layers share the responsibility for handling congestion
 + Timer expiration (optimistic)
 + Cycle detection (optimistic)
 
-##### Last-modified date: 2019.11.11, 10 p.m.
+## Lecture 17  Thread & Condition Variable
+
+### Yield()
+
+1. suspend running thread
+2. choose new thread
+3. resume thread to run
+
+但即使用了 yield，当有很多 sender 在等的时候也会做很多 unnecessary check，所以更好的做法是让 sender 去睡觉
+
+### Conditional Variable
+
+有了 conditional variable，等待的 sender 就可以去睡觉，但是为了让 release-wait-acquire 变成一个原子操作（解决 Lost-notify Problem），把 wait 接口改成可以接受一个 lock 参数，并引入新接口：yield_wait()。
+
+但是因为引入了新状态 WAITING，在 yield_wait() 选择新线程的时候有可能会因找不到 RUNNABLE 的线程而陷入死锁，所以要在 while 循环中放锁再拿锁。
+
+但是在放锁拿锁的间隙，另外一个 CPU 可以来执行同一个线程，这会导致两个 CPU 的栈指针指向同一块内存，一个 CPU 执行完操作更改了栈后，另一个 CPU 的栈指针会被污染，所以要在进入 while 循环前保存当前 CPU 的栈指针，使其指向一个相对私有的内存。
+
+### Preemption
+
+再考虑 preemption 的问题，在拿着 t_lock 的时候即使由于时间片用完被调度走了，别的线程也拿不了锁，所以在拿锁放锁的时候相应地关闭开启 interrupt（注意开关中断和拿放锁的顺序）
+
+但是在放锁拿锁的间隙（while 循环中），也同时是开启中断的间隙，时间片用完被调度走了，当前 CPU 执行另一个线程，另一个线程在 yield_wait() 的第一行会拿到错误的 id，所以要在先前线程进入 while 循环前将其设为 null。
+
+## Lecture 18  Thread Layer & Processor Layer
+
++ Thread Exit:
+
+  ![](./images/thread-processor1.png)
+
++ Context Switch:
+
+  ![](./images/thread-processor2.png)
+
+<div style="text-align:center;">
+    <img src="./images/thread-processor3.png" width="60%" />
+</div>
+## Lecture 19  Distributed Transaction
+
+client + coordinator + two servers
+
+### Two-phase Commit
+
++ phase-1: preparation / voting：Lower layer 准备就绪
++ phase-2: commitment：Higher layer 确认 commit
+
+可以嵌套，higher layer 可以是更上层的 lower layer
+
+3N messages
+
+### Replication Consistency
+
+#### Optimistic Replication
+
+use timestamps
+
+Time measuring: measure time intervals (fixed-frequency oscillator)
+
+Synchronize a clock over the Internet: NTP, but need to take into account network latency
+
+There exists a principle: time never goes backwards
+
+File Reconciliation
+
+Vector Timestamps
+
+#### Pessimistic Replication
+
+Quorum: Qr + Qw > Nreplicas
+
+## Lecture 20  RSM & PAXOS
+
+There still exists a problem: Clients' requests to different servers can arrive in different order.
+
+### RSM
+
+Replicated State Machines
+
+RSM 的核心在于 replica 的起始状态、输入顺序都是一样的，输入都是确定的，所以最终也能达到共同的状态，Primary / Backup Model 只是 RSM 使用的一个 mechanism：Primary 确定所有 non-deterministic 的值并将某一执行顺序发送给所有 backup，这样 backup 即满足 RSM 的核心要求。
+
+What if Primary fails? -> Coordinator knows about both primary and backup, and decides which to use? -> split brain: Multiple coordinators + Network partition = Problem
+
+So introduce View Server
+
+Primary in view `i` must have been primary or backup in view `i-1` （传承）
+
+### PAXOS
+
+rounds and phases are asynchronous
+
+不保证 termination
+
+#### phase 0: request
+
+<div>
+    <img src="./images/paxos0.png" width="45%" />
+</div>
+
+#### phase 1: proposal -> promise
+
+<div>
+    <img src="./images/paxos1a.png" width="45%" />
+    <img src="./images/paxos1b.png" width="45%" />
+</div>
+
+#### phase 2: accept
+
+如果在 phase 1b 收到的所有 promise 都不含 value，则 leader 可以自己指定一个 value
+
+否则，accept request 中的 value 必须是 promise 中最大 N 对应的那个 value
+
+<div>
+    <img src="./images/paxos2a.png" width="45%" />
+    <img src="./images/paxos2b.png" width="45%" />
+</div>
+
+#### phase 3: learn
+
+<div>
+    <img src="./images/paxos3.png" width="45%" />
+</div>
+
+### Paxos for RSM
+
+Paxos 可以用来保证 RSM 中多个 View Server 之间的一致性。
+
+## Lecture 21  P2P & Blockchain
+
+### P2P Network
+
+BitTorrent: Tracker, Seeder, Peer
+
+But rely on tracker, cannot scale to large numbers of torrents
+
+Scalable lookup: Distributed Hash Table (DHT):
+
++ Simple lookup: O(N)
++ Finger Table: O(logN)
+
+But failure may cause incorrect lookup, solution: successor lists
+
+### Bitcoin & Blockchain
+
++ Smart Contract: The nodes not only store transactions, but also code
++ Permission Chain: Bitcoin is a permission-less chain
+
+## Lecture 22  System Performance
+
+Buy new hardware - Moore's Law
+
+Why performance bottleneck?
+
+1. physical limitation
+2. sharing
+
+How to improve performance?
+
+1. measure the system, find the bottleneck
+2. relax the bottleneck
+
+### Performance Matrics
+
++ Capacity
++ Latency
++ Throughput
++ Utilization
+
+How to improve throughput? Reduce latency & Increase paralleling
+
+How to improve latency:
+
++ Fast Path: Make the common case faster (like cache)
++ Concurrency
++ Overlapping, prefetching
+
+## Lecture 23  Fighting bottlenecks
+
+### Batching
+
+Dallying: procrastination sometimes helps
+
++ write absorption (write back)
++ group commit
+
+### Caching
+
+make common case faster
+
+### Concurrency
+
+Speculation, but need to be able to undo changes if wrong
+
+### Parallelism
+
+Out-of-order execution
+
+### Case: I/O Bottleneck
+
+Optimization: prefetch -> batch write -> overlap computation and I/O
+
+### Cache policies
+
+FIFO, but has Belady's anomaly
+
+OPT, LRU, Clock algorithm
+
+### Scheduling
+
++ FCFS, SJF, Round-Robin
++ Priority Scheduling Policy
+  + high priority for I/O-bound jobs
+  + low priority for CPU-bound jobs
+  + priority inheritance
++ Earliest Deadline First
++ Disk scheduling:
+  + First-come, first serve
+  + Elevator algorithm
+  + Shortest-seek first
+
+## Lecture 24  Security Introduction
+
++ Why is Security so hard? --Because Security is a negative goal.
++ Why not using fault tolerant techniques?
+  1. result may be too much, cannot afford once
+  2. failures due to attacks may be highly correlated
+
+### Policy: Goals
+
+Security goals:
+
++ Confidentiality: who can read
++ Integrity: who can write
+
+Liveness goals:
+
++ Availability: ensure service keep operating
+
+### Threat Model: Assumptions
+
+### Guard Model
+
++ Complete Mediation
++ Authentication and Authorization
++ principle of least privilege
+
+## Lecture 25  Authentication
+
+Trusted is bad.
+
+Good design has few trusted components.
+
+TCB: Trust Computing Base 信任基，必须要相信的东西
+
+policy: high level
+
+mechanism: low level
+
+### Case: Password
+
+guess password: Page-fault means first char is OK -- Timing Attack
+
+solution: store hash of password
+
+but adversary can guess using rainbow table
+
+solution: salting
+
+## Lecture 26  Secure Channel & Local Security
+
+### Secure Channel
+
+adversary in the network can observe, corrupt, inject and drop packets
+
+<div style="text-align:center;">
+    <img src="./images/encrypt-mac.png" width="60%" />
+    <br />
+    <br />
+    <img src="./images/encrypt-mac2.png" width="80%" />
+</div>
+
+but there exists replay attacks - solution: add seq number
+
+but there still exists reflection attacks - solution: use different keys for Alice and Bob
+
+how do the parties know the keys? - Diffie-Hellman Key Exchange
+
+but there still exists man-in-the-middle attack - solution: RSA Algorithm
+
+Symmetric key encryption vs. Asymmetric key encryption
+
+Certificate Authorities
+
+### Local Security
+
+### Taint Tracking
+
+The lifetime of sensitive data should be minimized. --data exposure
+
+比如将用户的输入标记为 taint，凡是被 taint 赋值过的变量也标记为 taint
+
+taint check: seed -> tracker -> assert，性能下降 37.2x
+
+## Lecture 27  ROP & CFI
+
+### ROP
+
+Stack buffer overflow -> Defense: DEP (Data Execution Prevention)
+
+Code Reuse Attack / ROP (Return-oriented programming) -> Defense: 
+
++ Hide the binary file
++ ASLR (Address Space Layout Randomization)
++ Canary
+
+### CFI
+
+Control Flow Integrity
+
+pre-determine control flow graph (CFG) of an application
+
+improvement: shadow call stack
+
+## Lecture 28  Minimize TCB
+
+monolithic kernel vs. micro kernel:
+
+<div>
+    <img src="./images/monolithic-kernel.png" width="48%" />
+    <img src="./images/micro-kernel.png" width="48%" />
+</div>
+
+*(blue components are in user space while red ones are in kernel space)*
+
+TPM: Trusted Platform Module, Root of Trust
+
+##### Last-modified date: 2019.12.23, 2 p.m.
+
+
 
 
