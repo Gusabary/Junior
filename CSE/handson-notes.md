@@ -76,5 +76,14 @@
 
   ![](./handson-3/6.png)
 
-##### Last-modified date: 2019.12.16, 12 p.m.
+## [Hands-on 4  Name Service and Database Partitioning](<https://ipads.se.sjtu.edu.cn/courses/cse/handson/handson-4.html>)
+
++ 服务可以注册 watcher 监听 zookeeper server 中数据的变化，但是为了高可用，zookeerper server 往往不是单机，而是一个集群，集群中的机器保持一致性用的就是 paxos 协议。
++ 高可用，且集群中的机器可以保证一致性。
++ 1. 起一个 zookeeper server 在 10.0.0.5，并且创建一个用来保存 ip-hostname map 的 znode。
+  2. 扒拉一段代码，将 Executor 类的构造函数入参改成自己 zookeeper server 的 ip，znode 的 name 以及 `/etc/hosts` （因为服务的容器中 ip-hostname map 存储在这个文件中）。在服务起来的时候，服务自身的 ip-hostname pair 会存储在 `/etc/hosts` 中，将其注册到 znode 上，并将 znode 中所有其他的 pair 拉取到自己的 `/etc/hosts` 里。
+  3. 打包，修改 Dockerfile，起服务的时候不仅要起业务逻辑，还要额外起一个 zookeeper 的 jar 包。
++ 原本只起一个 Object-db 容器，现在起三个，因为在改 zookeeper 代码的时候加了一段 hostname 可以通过 DNS 环境变量导入的代码，所以三个 db 的 hostname 可以分别是 carts-db，user-db 以及 orders-db，这样不同的服务使用的就是不同的数据库。
+
+##### Last-modified date: 2019.12.23, 12 p.m.
 
