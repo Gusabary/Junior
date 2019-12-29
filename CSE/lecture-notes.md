@@ -777,7 +777,94 @@ monolithic kernel vs. micro kernel:
 
 TPM: Trusted Platform Module, Root of Trust
 
-##### Last-modified date: 2019.12.23, 2 p.m.
+## Lecture 29  Virtual Machine
+
+### CPU Virtualization
+
+Why not run a VM as a process?  -Because privileged instructions cannot run in user mode like modifying CR3
+
+So Trap and Emulate
+
+<div style="text-align:center;">
+    <img src="./images/trap-emulate.png" width="50%" />
+</div>
+
+But not all ISA are strictly virtualizable, such as X86. That means some instructions can be both privileged and unprivileged. (17 instructions)
+
+How to deal with the 17 instructions?
+
+#### Instruction Interpretation
+
+Emulate pipeline in software
+
+Easy but very slow
+
+#### Binary Translator
+
+Translate before execution
+
+Translation unit is basic block
+
+Translate 17 instructions to function calls
+
+Some issues:
+
++ now interrupt will only happen at basic block boundary
++ need to handle self-modifying code (due to translated code cache)
+
+#### Para-virtualization
+
+Modify OS and let it cooperate with VMM
+
+hypercall
+
+#### New Hardware
+
+<div style="text-align:center;">
+    <img src="./images/ring.png" width="80%" />
+</div>
+
+### Memory Virtualization
+
+#### Shadow paging
+
+<div style="text-align:center;">
+    <img src="./images/shadow-paging.png" width="80%" />
+</div>
+
++ SPT: per application
++ GPT: per application
++ HPT: per VM
+
+VMM needs to intercept when guest OS modifies page table, and update the shadow page table accordingly
+
+Two shadow page tables, one for user, one for kernel:
+
+<div style="text-align:center;">
+    <img src="./images/2pt.png" width="90%" />
+</div>
+
+#### Direct paging
+
+modify guest OS, no GPA needed
+
+easy but not transparent to guest OS
+
+#### New hardware
+
+### I/O virtualization
+
++ Device emulation
++ Para-virtualization driver
++ New hardware
+
+### Lecture 30  Enclave & TEE
+
+still a long way to go...
+
+##### Last-modified date: 2019.12.29, 1 p.m.
+
+
 
 
 
