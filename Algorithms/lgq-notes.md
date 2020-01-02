@@ -64,4 +64,48 @@
 + 如果所有 NP 问题都能多项式时间内归约到某问题，则该问题是 NP-hard 问题。
 + 如果某个问题是 NP 也是 NP-hard，则该问题是 NP-Complete 问题。
 
-##### Last-modified date: 2020.1.2, 4 p.m.
+## Algorithms with Numbers
+
+仅改变数的进制，不会影响算法的复杂度。
+
+### Addition
+
+任意三个 single-digit 的数相加，结果最多是两位 digit。
+
+最优算法：O(n)，其中 n 是位数
+
+### Multiplication
+
+naive 算法：O(n^2)
+
+可以用 Gauss's trick 优化到大概 O(n^1.59)
+
+### Division
+
+### Modular Arithmetic
+
+### Greatest Common Divisor (GCD)
+
+![1577955611882](./images/gcd.png)
+
+check if d is gcd(x, y):
+
+![1577955942672](./images/gcd2.png)
+
+### Modular Inverse
+
+![1577968710999](./images/modular-inverse.png)
+
++ 如果 gcd(a, N) > 1，则 a 不存在 mod N 的模倒数
++ 如果 gcd(a, N) = 1（a, N 互质），则存在 x, y，使得 ax+Ny=1，所以 x 即为 a mod N 的模倒数
+
+### Fermat's Little Theorem
+
+![1577969755573](./images/fermat.png)
+
++ 为什么费马大定理不能用作素数测试，因为这只是个充分条件，即如果 p 是素数，p 满足费马大定理，如果 p 满足费马大定理，p 不一定是素数。
++ Carmichael Number：如果某个合数 N 满足费马大定理，则 N 称为 Carmichael Number
++ Non-Carmichael Number：对于不满足费马大定理的合数 N，一定有至少一半的 a < N 通不过费马测试
++ 所以对于忽略 Carmichael Number 的素数测试，可以选取若干小于 N 的数，判断它们是否通过费马测试，如果全部通过，则 N 大概率是一个素数。
+
+##### Last-modified date: 2020.1.2, 9 p.m.
