@@ -50,4 +50,18 @@
 + 如果在 V-1 次迭代以后仍然没有收敛，则说明有负环
 + 在有负边的 DAG 中，仍然可以使用 Dijkstra 算法，只要按照线性化之后的顺序 update 即可。
 
-##### Last-modified date: 2020.1.2, 2 p.m.
+## NP Problems
+
+### Minimum Spanning Trees (MST)
+
++ Kruskal's algorithm: 每次加一条最短的边
++ Prim's algorithm: 每次加一个距离最短的节点
+
+### 2-SAT
+
+### NP-Complete Problem
+
++ 如果所有 NP 问题都能多项式时间内归约到某问题，则该问题是 NP-hard 问题。
++ 如果某个问题是 NP 也是 NP-hard，则该问题是 NP-Complete 问题。
+
+##### Last-modified date: 2020.1.2, 4 p.m.
