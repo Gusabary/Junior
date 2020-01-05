@@ -108,4 +108,86 @@ check if d is gcd(x, y):
 + Non-Carmichael Number：对于不满足费马大定理的合数 N，一定有至少一半的 a < N 通不过费马测试
 + 所以对于忽略 Carmichael Number 的素数测试，可以选取若干小于 N 的数，判断它们是否通过费马测试，如果全部通过，则 N 大概率是一个素数。
 
-##### Last-modified date: 2020.1.2, 9 p.m.
+## Linear Programming
+
+最优解一定在可行域的顶点取到，只有两种例外：
+
++ 没有可行域
++ 可行域是 unbounded，没有最优解
+
+### Simplex Method
+
+从一个顶点开始，寻找更优的邻节点，当没有更优的邻节点时，当前顶点即为最优节点。
+
+### Duality
+
+![1578210822324](./images/duality.png)
+
+![1578210896905](./images/duality2.png)
+
+### Flows in Networks
+
+residual network
+
+##### Last-modified date: 2020.1.5, 7 p.m.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
