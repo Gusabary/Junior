@@ -61,6 +61,7 @@
   | orr / orn                  | 按位或 / 按位或非                                      |
   | mvn                        | 按位非                                                 |
   | eor / eon （exclusive or） | 按位异或 / 按位异或非                                  |
+  | bic （bitwise bit clear）  | 先将第二个操作数取反，再按位与（按位置 0）             |
   | asr                        | 算数右移（复制符号位）                                 |
   | lsl / lsr                  | 逻辑左移 / 逻辑右移（补 0）                            |
   | mov                        | 赋值                                                   |
@@ -84,25 +85,26 @@
   | cset / csetm（mask）  | 条件为真时将目的寄存器置为 1 / 全1，为假时置为 0 / 全0       |
   | cinc / cinv / cneg    | 赋值，条件为真时直接赋值，为假时先 +1 / 取反 / 取负          |
 
-+ Bit Manipulation：
-
-  | 指令 | 功能 |
-  | ---- | ---- |
-  |      |      |
-  |      |      |
-  |      |      |
-  |      |      |
++ Bit Manipulation
 
 + Branch：
 
-  | 指令 | 功能 |
-  | ---- | ---- |
-  |      |      |
-  |      |      |
-  |      |      |
-  |      |      |
+  | 指令       | 功能                                            |
+  | ---------- | ----------------------------------------------- |
+  | b / br     | 无条件 jump 到 label / 寄存器所指地址           |
+  | b.cond     | 有条件 jump 到 label                            |
+  | bl / blr   | call label / 寄存器所指地址                     |
+  | ret        | return                                          |
+  | cbz / cbnz | 如果寄存器值为 0 / 不为 0，就 jump 到 label     |
+  | tbz / tbnz | 如果寄存器某一位为 0 / 不为 0，就 jump 到 label |
 
-  
++ System：
+
+  | 指令      | 功能                                         |
+  | --------- | -------------------------------------------- |
+  | msr / mrs | 将一个通用寄存器的值赋给系统寄存器 / 反过来  |
+  | svc       | 产生 exception，陷入 EL1（类似 system call） |
+  | nop       | 空指令，仅仅将 PC + 4，可用于指令对齐        |
 
 ## Makefile
 
@@ -127,7 +129,7 @@
 
 + 回声：正常情况下，make 会打印每条命令（包括注释），在命令前加上@，可以关闭回声。但是由于在构建过程中，一般需要了解当前在执行哪条命令，所以通常只会关闭注释和纯显示命令（echo）的回声。
 
-+ Makefile 定义了四种赋值0、运算符：
++ Makefile 定义了四种赋值运算符：
 
   + `=`：执行时扩展，lazy set
   + `:=`：定义时扩展，immediate set
@@ -136,4 +138,31 @@
 
 + [*reference*](<http://www.ruanyifeng.com/blog/2015/02/make.html>)
 
-##### Last-modified date: 2020.3.6, 6 p.m.
+## Linker Script
+
++ linker script，即链接器脚本，决定了可执行文件的链接方式，一般为 `.lds` 文件
+
++ 该文件主要由一个 `SECTIONS{}` 字段组成，其中包含每一段的信息，例如 VMA，LMA，段的内容等。
+
++ 每一段的格式大致是：
+
+  ```
+  secname vma : AT(lma) {
+      contents
+  }
+  ```
+
+  其中 vma 和 lma 都是可省的。
+
+  contents 表示要将哪些目标文件的哪些段链接起来，可以使用通配符
+
++ `.lds` 文件中的 `.` 表示当前位置，可以被赋值成某个绝对地址，或者设置对齐（`ALIGN`）
+
++ 将 `.` 赋值给某个变量可以将当前地址保存下来，在程序中使用
+
++ *references*:
+
+  + <https://blog.csdn.net/itxiebo/article/details/50937412>
+  + <https://www.cnblogs.com/lotgu/p/5906161.html>
+
+##### Last-modified date: 2020.3.7, 12 p.m.
