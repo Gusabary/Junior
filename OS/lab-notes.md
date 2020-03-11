@@ -2,7 +2,7 @@
 
 ## Lab 1  Booting a machine
 
-+ printf 只有 10 进制可以为负
++ printf 只有 10 进制可以加负号
 
 ### Exercises
 
@@ -60,8 +60,41 @@
    + `.text` 段的内容使用通配符匹配所有目标文件的 `.text` 段，在 `CMakeLists.txt` 中 `kernel` 目录被 include 了进来，所以 `.text` 段中存储的是 kernel 相关的代码。
    + kernel 相关的代码在运行的时候存储在高地址，所以 VMA 会加上一个 offset，也即 `KERNEL_VADDR`
 
-6. 实现 print 函数
+6. 实现 print 函数：将 n 不断的模 base，再除以 base，如此反复可以得到每个数位上的数以组成一个字符串，如果是负数要在末尾添一个负号，最后翻转一下整个字符串。
 
-7. 
+7. kernel stack 初始化在 `0xffffff00000d0100`，这段代码是在 `kernel/head.S` 中：
+
+   ```assembly
+   ldr     x2, =kernel_stack
+   add     x2, x2, KERNEL_STACK_SIZE
+   mov     sp, x2
+   ```
+
+   而 `kernel_stack` 是一个在 `kernel/main.c` 中声明的未初始化变量，所以存储在 `.bss` 段中。之前 `objdump` 出来的 `.bss` 段信息如下：
+
+   ```
+   Name      Size      VMA               LMA
+   .bss      00008000  ffffff00000d0100  00000000000d0100
+   ```
+
+   又因为 `kernel_stack` 声明成一个 4 x 8K 的二维 char 数组，大小恰为 `0x8000`，所以可知整个 `.bss` 段中只有这一个变量，也就是说 `kernel_stack` 的运行时地址是 `.bss` 段的起始地址，即 `0xffffff00000d0100`。
+
+   确认了 kernel stack 的位置以后，再通过加上一个 `KERNEL_STACK_SIZE` 的偏移（8K）来为栈预留空间。
+
+8. `test_backtrace` 中每次递归调用就会将栈扩大 `0x20` 个字节，也就是 4 个 giantword 的大小，其中第 1 个（最靠下的）giantword 为 frame pointer，第 2 个 giantword 为 return address：
+
+   ```assembly
+   stp     x29, x30, [sp, #-32]!
+   ```
+
+   第 3 个 giantword 为上一层递归调用中的实参 x，第 4 个 giantword 没有用到（栈指针 16 字节对齐）：
+
+   ```assembly
+   str     x19, [sp, #16]
+   ```
+
+9. 实现 `mon_backtrace` 函数：从当前的 frame pointer 开始，除 `mon_backtrace` 本身以外，最新的帧的 FP 为该帧最后一个 giantword 的地址，LR 为该帧倒数第二个 giantword，实参则存储在下一帧从倒数第三个 giantword 开始的空间中。如此循环，直到某一帧的 FP 为 0 为止。
+
+##### Last-modified date: 2020.3.11, 5 p.m.
 
  
