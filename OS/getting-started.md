@@ -20,7 +20,9 @@
   + EL1：Kernel
   + EL2：Hypervisor
   + EL3：Secure Monitor
++ X29 即为 FP
 + X30 即为 LR，和 ELR 不同的是，LR 保存的是 subroutine 的返回地址（在 exception level 内部调用并返回），而 ELR 保存的是 exception handler 的返回地址（有可能跨 exception level 调用并返回）
++ X31 有可能是零寄存器（ZR），也有可能是栈指针（SP）
 + condition flags:
   + N：negative
   + Z：zero / equal
@@ -165,4 +167,4 @@
   + <https://blog.csdn.net/itxiebo/article/details/50937412>
   + <https://www.cnblogs.com/lotgu/p/5906161.html>
 
-##### Last-modified date: 2020.3.7, 12 p.m.
+##### Last-modified date: 2020.3.11, 5 p.m.
