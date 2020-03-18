@@ -93,8 +93,10 @@
    str     x19, [sp, #16]
    ```
 
-9. 实现 `mon_backtrace` 函数：从当前的 frame pointer 开始，除 `mon_backtrace` 本身以外，最新的帧的 FP 为该帧最后一个 giantword 的地址，LR 为该帧倒数第二个 giantword，实参则存储在下一帧从倒数第三个 giantword 开始的空间中。如此循环，直到某一帧的 FP 为 0 为止。
+9. 如上一问所述，当发生 function call 的时候，栈会扩大，栈指针会更新，x29 保存在最靠下的一个 giantword（也即新的 sp 所指位置），往上一个 giantword 保存 x30（也即 sp+8 的位置），再往上则是实参（sp+16 往上） 
 
-##### Last-modified date: 2020.3.11, 5 p.m.
+10. 实现 `mon_backtrace` 函数：从当前的 frame pointer 开始，除 `mon_backtrace` 本身以外，最新的帧的 FP 为该帧最后一个 giantword 的地址，LR 为该帧倒数第二个 giantword，实参则存储在下一帧从倒数第三个 giantword 开始的空间中。如此循环，直到某一帧的 FP 为 0 为止。
+
+##### Last-modified date: 2020.3.18, 3 p.m.
 
  
