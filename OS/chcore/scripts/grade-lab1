@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+
+import re
+from gradelib import *
+
+r = Runner(save("chcore.out"),
+           stop_breakpoint("break_point"))
+
+@test(0, "running ChCore")
+def test_chcore():
+    r.run_qemu(30)
+
+@test(15, parent=test_chcore)
+def test_boot_print():
+    addrs = [int(sym[:16], 16) for sym in open("./build/kernel.sym")
+            if sym[19:].strip() == "start_kernel"]
+    r.match("\[BOOT\] Jump to kernel main at 0x%x" % addrs[0])
+
+@test(15, parent=test_chcore)
+def test_kernel_print():
+    r.match("\[INFO\] 6828 decimal is 1aac hex!")
+
+BACKTRACE_RE = r" *LR *ffffff00000[0-9a-z]{5} *FP *ffffff00000d[0-9a-z]{4} *Args *([0-9a-z]+)"
+BACKTRACE_LR = r" *LR *(ffffff00000[0-9a-z]{5}) *FP *ffffff00000d[0-9a-z]{4} *Args *[0-9a-z]+"
+
+@test(15, parent=test_chcore)
+def test_backtrace_count():
+    matches = re.findall(BACKTRACE_RE, r.qemu.output, re.MULTILINE)
+    assert_equal(len(matches), 7)
+
+@test(15, parent=test_chcore)
+def test_backtrace_arguments():
+    matches = re.findall(BACKTRACE_RE, r.qemu.output, re.MULTILINE)
+    assert_equal("\n".join(matches[:6]),
+                 "\n".join("%01x" % n for n in [0,1,2,3,4,5]))
+
+@test(20, parent=test_chcore)
+def test_backtrace_lr():
+    matches = re.findall(BACKTRACE_LR, r.qemu.output, re.MULTILINE)
+    addrs = [int(sym[:16], 16) for sym in open("./build/kernel.sym")
+            if sym[19:].strip() == "test_backtrace"][0] + 80
+    for i in range(5):
+        assert_equal(int(matches[i], 16), addrs)
+
+run_tests()
