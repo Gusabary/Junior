@@ -30,7 +30,7 @@ set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
 set(DISABLE_FPU "")
 set(CMAKE_C_FLAGS
-    "-Wall -fPIC -nostdlib -nostartfiles -ffreestanding -Werror \
+    "-Wall -fPIC -nostdlib -nostartfiles -ffreestanding  \
     -DCHCORE -nostdinc ${DISABLE_FPU}")
 
 project (chos C ASM)
@@ -41,6 +41,7 @@ set(KERNEL_PATH         "${CMAKE_CURRENT_SOURCE_DIR}/kernel")
 
 set(KERNEL_ARCH_PATH        "${KERNEL_PATH}")
 set(KERNEL_INCLUDE_PATH     "${KERNEL_PATH}")
+set(KERNEL_MM_PATH          "${KERNEL_PATH}/mm")
 
 include_directories(".")
 include_directories("${KERNEL_INCLUDE_PATH}")
@@ -49,6 +50,10 @@ set(files "")
 include("${BOOTLOADER_PATH}/config.cmake")
 
 add_subdirectory("${KERNEL_ARCH_PATH}")
+add_subdirectory("${KERNEL_MM_PATH}")
+
+# TODO: check & remove: master delete the following line
+# add_subdirectory("${KERNEL_TMPFS_PATH}")
 
 set(BINARY_KERNEL_IMG_PATH "CMakeFiles/kernel.img.dir")
 
@@ -71,6 +76,7 @@ configure_file("./scripts/linker-aarch64.lds.in" "linker.lds.S")
 
 add_executable(kernel.img ${files} 
     $<TARGET_OBJECTS:${PROJECT_NAME}-arch>
+    $<TARGET_OBJECTS:${PROJECT_NAME}-mm>
 )
 
 set_property(

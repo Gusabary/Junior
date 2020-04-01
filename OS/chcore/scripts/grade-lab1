@@ -31,14 +31,14 @@ def test_backtrace_count():
 @test(15, parent=test_chcore)
 def test_backtrace_arguments():
     matches = re.findall(BACKTRACE_RE, r.qemu.output, re.MULTILINE)
-    assert_equal("\n".join(matches[:6]),
-                 "\n".join("%01x" % n for n in [0,1,2,3,4,5]))
+    assert_equal("\n".join(matches[:7]),
+                 "\n".join("%01x" % n for n in [0,1,2,3,4,5,0]))
 
 @test(20, parent=test_chcore)
 def test_backtrace_lr():
     matches = re.findall(BACKTRACE_LR, r.qemu.output, re.MULTILINE)
     addrs = [int(sym[:16], 16) for sym in open("./build/kernel.sym")
-            if sym[19:].strip() == "test_backtrace"][0] + 80
+            if sym[19:].strip() == "test_backtrace"][0] + 92
     for i in range(5):
         assert_equal(int(matches[i], 16), addrs)
 

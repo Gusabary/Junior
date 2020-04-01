@@ -7,4 +7,9 @@ add_library(${PROJECT_NAME}-arch OBJECT
     common/tools.S
     common/uart.c
     common/printk.c
+    mm/page_table.S
+    mm/memcpy.S
+    mm/memmove.S
+    mm/memset.S
+    mm/bzero.S
 )

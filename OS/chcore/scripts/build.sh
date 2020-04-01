@@ -17,6 +17,10 @@ EOF
     cd ..
 fi
 
+# compile user directory
+#echo "compiling user ..."
+#./scripts/compile_user.sh "$@"
+
 # compile kernel
 echo "compiling kernel ..."
 cd build

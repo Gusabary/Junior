@@ -56,7 +56,7 @@
 #define unlikely(x) (!!(x))
 #endif  // __GNUC__
 
-#define BIT(x)			(1 << (x))
+#define BIT(x)			(1UL << (x))
 
 #define offsetof(TYPE, MEMBER)  ((u64)&((TYPE *)0)->MEMBER)
 #define container_of(ptr, type, field) \

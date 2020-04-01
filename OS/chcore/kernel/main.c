@@ -14,6 +14,7 @@
 #include <common/macro.h>
 #include <common/uart.h>
 #include <common/machine.h>
+#include <common/mm.h>
 
 ALIGN(STACK_ALIGNMENT)
 char kernel_stack[PLAT_CPU_NUM][KERNEL_STACK_SIZE];
@@ -28,7 +29,7 @@ test_backtrace(long x)
 	if (x > 0)
 		test_backtrace(x-1);
 	else
-		mon_backtrace();
+		mon_backtrace(0, 0, 0);
 	kinfo("leaving test_backtrace %d\n", x);
 }
 
@@ -38,13 +39,15 @@ void main(void *addr)
 	uart_init();
 	kinfo("[ChCore] uart init finished\n");
 
-  kinfo("6828 decimal is %x hex!\n", 6828);
+  	kinfo("6828 decimal is %x hex!\n", 6828);
 
-  test_backtrace(5);
+  	test_backtrace(5);
 
-
-  break_point();
-  return;  // XXX: for lab1
+	mm_init(NULL);
+	kinfo("mm init finished\n");
+	// while(1) {}
+	break_point();
+  	return;  
 
 	/* Should provide panic and use here */
 	BUG("[FATAL] Should never be here!\n");
