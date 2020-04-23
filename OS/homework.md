@@ -98,6 +98,17 @@
 
    可以采用类似 round-robin 的机制，规定全局锁在一个 NUMA 节点内部传递过一定次数后就要放锁给别的节点。
 
-6. 应当在 CAS 中 load 锁的旧值和 store 锁的新值之间加 barrier
+6. ```c
+   void lock(struct spinlock* lock) {
+   	/* locking */
+       barrier();
+   }
+   
+   void unlock(struct spinlock* lock) {
+       barrier();
+   	/* unlocking */
+   }
+   ```
 
-##### Last-modified date: 2020.4.19, 6 p.m.
+##### Last-modified date: 2020.4.23, 9 a.m.
+
