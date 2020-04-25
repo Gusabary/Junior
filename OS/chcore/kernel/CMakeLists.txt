@@ -1,15 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 
-add_library(${PROJECT_NAME}-arch OBJECT
+add_library(${PROJECT_NAME}-arch process
     head.S
     main.c
     monitor.c
-    common/tools.S
+    tools.S
     common/uart.c
     common/printk.c
-    mm/page_table.S
-    mm/memcpy.S
-    mm/memmove.S
-    mm/memset.S
-    mm/bzero.S
+    common/radix.c
 )

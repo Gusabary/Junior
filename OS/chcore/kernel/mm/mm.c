@@ -59,7 +59,7 @@ void map_kernel_space(vaddr_t va, paddr_t pa, size_t len)
 	//lab2
 	unsigned long pgd = get_ttbr1();
 	vmr_prop_t flags = VMR_WRITE | VMR_EXEC | VMR_BLK_2M;
-	map_range_in_pgtbl(phys_to_virt(pgd), va, pa, len, flags);
+	map_range_in_pgtbl((vaddr_t *)phys_to_virt(pgd), va, pa, len, flags);
 }
 
 void kernel_space_check()
@@ -128,5 +128,5 @@ void mm_init(void *info)
 
 	map_kernel_space(KBASE + (64UL<< 21), 64UL<< 21, 64UL<<21);
 	//check whether kernel space [KABSE + 128 : KBASE + 256] is mapped 
-	kernel_space_check();
+	// kernel_space_check();
 }

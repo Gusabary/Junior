@@ -47,6 +47,7 @@ static int set_pte_flags(pte_t *entry, vmr_prop_t flags, int kind)
 	else
 		entry->l3_page.AP = ARM64_MMU_ATTR_PAGE_AP_HIGH_RO_EL0_RO;
 
+	// FIXME: l1, l2 and l3's UXNs are in different bit position
 	if (flags & VMR_EXEC)
 		entry->l3_page.UXN = ARM64_MMU_ATTR_PAGE_UX;
 	else
@@ -238,6 +239,7 @@ int map_range_in_pgtbl(vaddr_t *pgtbl, vaddr_t va, paddr_t pa,
 		int level = 0;
 		while (level <= final_level) {
 			rc = get_next_ptp(cur_pgtbl, level, va, &next_ptp, &pte, true);
+			(void)rc;  // suppress warning
 			cur_pgtbl = next_ptp;
 			level++;
 		}

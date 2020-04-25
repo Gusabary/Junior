@@ -117,7 +117,7 @@ static struct page *__alloc_page(struct global_mem *zone, u64 order)
 		return NULL;
 	}
 
-	struct list_head *free_node;
+	struct list_head *free_node = NULL;
 	struct free_list *list = zone->free_lists;
 	u64 free_order = order;
 	for (; free_order <= BUDDY_MAX_ORDER; free_order++)

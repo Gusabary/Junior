@@ -150,15 +150,18 @@ def assert_lines_match(text, *regexps, **kw):
     lines = text.splitlines()
     good = set()
     bad = set()
+    first_line = 0
     for i, line in enumerate(lines):
         if any(re.match(r, line) for r in regexps):
+            if (first_line == 0):
+                first_line = i
             good.add(i)
             regexps = [r for r in regexps if not re.match(r, line)]
         if any(re.match(r, line) for r in no):
             bad.add(i)
 
     if not regexps and not bad:
-        return
+        return first_line
 
     # We failed; construct an informative failure message
     show = set()
@@ -186,6 +189,62 @@ def assert_lines_match(text, *regexps, **kw):
     for r in regexps:
         msg.append(color("red", "MISSING") + " '%s'" % r)
     raise AssertionError("\n".join(msg))
+    return 0
+
+def assert_lines_match_line(line_num, text, *regexps, **kw):
+    """Assert that all of regexps match some line in text.  If a 'no'
+    keyword argument is given, it must be a list of regexps that must
+    *not* match any line in text."""
+    
+    def assert_lines_match_kw(no=[]):
+        return no
+    no = assert_lines_match_kw(**kw)
+
+    # Check text against regexps
+    lines = text.splitlines()
+    good = set()
+    bad = set()
+    first_line = 0
+    for i, line in enumerate(lines):
+        if (i >=line_num):
+            if any(re.match(r, line) for r in regexps):
+                if (first_line == 0 ):
+                    first_line = i
+                good.add(i)
+                regexps = [r for r in regexps if not re.match(r, line)]
+            if any(re.match(r, line) for r in no):
+                bad.add(i)
+
+    if not regexps and not bad:
+        return first_line
+
+    # We failed; construct an informative failure message
+    show = set()
+    for lineno in good.union(bad):
+        for offset in range(-2, 3):
+            show.add(lineno + offset)
+    if regexps:
+        show.update(n for n in range(len(lines) - 5, len(lines)))
+
+    msg = []
+    last = -1
+    for lineno in sorted(show):
+        if 0 <= lineno < len(lines):
+            if lineno != last + 1:
+                msg.append("...")
+            last = lineno
+            msg.append("%s %s" % (color("red", "BAD ") if lineno in bad else
+                                  color("green", "GOOD") if lineno in good
+                                  else "    ",
+                                  lines[lineno]))
+    if last != len(lines) - 1:
+        msg.append("...")
+    if bad:
+        msg.append("unexpected lines in output")
+    for r in regexps:
+        msg.append(color("red", "MISSING or WRONG ORDER") + " '%s'" % r)
+    raise AssertionError("\n".join(msg))
+    return 0
 
 ##################################################################
 # Utilities
@@ -450,7 +509,7 @@ Failed to shutdown QEMU.  You might need to 'killall qemu' or
             while True:
                 timeleft = deadline - time.time()
                 if timeleft < 0:
-                    sys.stdout.write("Timeout! ")
+                    # sys.stdout.write("Timeout! ")
                     sys.stdout.flush()
                     return
 
@@ -478,10 +537,15 @@ Failed to shutdown QEMU.  You might need to 'killall qemu' or
         """Shortcut to call assert_lines_match on the most recent QEMU
         output."""
 
-        assert_lines_match(self.qemu.output, *args, **kwargs)
+        return assert_lines_match(self.qemu.output, *args, **kwargs)
+
+    def match_line(self, line_num, *args, **kwargs):
+        """Shortcut to call assert_lines_match on the most recent QEMU
+        output."""
+        return assert_lines_match_line(line_num, self.qemu.output, *args, **kwargs)
 
     def make_kernel(self, binary):
-        os.system("./scripts/docker_build.sh %s" % binary)
+        os.system("./scripts/docker_build.sh %s > tmp.out" % binary)
 
     def file_match(self, file_name, r):
         f = open(file_name, 'r')

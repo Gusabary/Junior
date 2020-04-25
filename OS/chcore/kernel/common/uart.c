@@ -10,7 +10,7 @@
  *   See the Mulan PSL v1 for more details.
  */
 
-#include <common/machine.h>
+#include <lib/machine.h>
 #include <common/types.h>
 #include "tools.h"
 #include <common/uart.h>

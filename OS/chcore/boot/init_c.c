@@ -2,6 +2,7 @@
 #include "print/uart.h"
 #include "boot.h"
 #include "image.h"
+#include "lib/efi.h"
 
 ALIGN(16) VISIBLE
 char boot_cpu_stack[CONFIG_MAX_NUM_CPUS][BIT(PAGE_BITS)] = { 0 };
