@@ -1,6 +1,6 @@
 // hello, world
 #include <lib/print.h>
-#include <lib/types.h>
+#include <lib/type.h>
 #include <lib/syscall.h>
 
 int main(int argc, char *argv[], char *envp[])

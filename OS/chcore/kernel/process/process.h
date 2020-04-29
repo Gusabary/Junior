@@ -14,7 +14,7 @@
 
 #include <process/capability.h>
 #include <common/list.h>
-#include <lib/types.h>
+#include <common/types.h>
 #include <common/bitops.h>
 #include <common/kprint.h>
 #include <common/macro.h>

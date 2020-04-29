@@ -38,7 +38,7 @@ static int slot_table_init(struct slot_table *slot_table, unsigned int size)
 
 	size = DIV_ROUND_UP(size, BASE_OBJECT_NUM) * BASE_OBJECT_NUM;
 	slot_table->slots_size = size;
-	/* XXX: vmalloc is better? */
+
 	slot_table->slots = kzalloc(size * sizeof(*slot_table->slots));
 	if (!slot_table->slots) {
 		r = -ENOMEM;
@@ -257,12 +257,12 @@ void process_create_root(char* bin_name) {
 
 	thread_cap = thread_create_main(root_process, ROOT_THREAD_STACK_BASE,
 					ROOT_THREAD_STACK_SIZE, ROOT_THREAD_PRIO,
-					TYPE_ROOT, 0, binary, bin_name);
-	/* XXX: no need to get/put */
+					TYPE_ROOT, smp_get_cpu_id(), binary, bin_name);
+
 	root_thread = obj_get(root_process, thread_cap, TYPE_THREAD);
 	/* Enqueue: put init thread into the ready queue */
+	BUG_ON(sched_enqueue(root_thread));
 	obj_put(root_thread);
-	current_thread = root_thread;
 }
 
 
@@ -294,7 +294,6 @@ int sys_create_process(void)
 		goto out_free_cap_grp_current;
 	}
 
-	/* TODO: also put vmspace's cap in current process? */
 	/* 2st cap is vmspace */
 	vmspace = obj_alloc(TYPE_VMSPACE, sizeof(*vmspace));
 	if (!vmspace) {

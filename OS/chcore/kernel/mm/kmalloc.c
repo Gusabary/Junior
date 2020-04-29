@@ -75,7 +75,6 @@ void *kzalloc(size_t size)
 	return ptr;
 }
 
-/* TODO: what if ptr is not allocated */
 void kfree(void *ptr)
 {
 	struct page *p_page;

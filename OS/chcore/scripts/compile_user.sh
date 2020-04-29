@@ -22,9 +22,9 @@ echo "building ramdisk ..."
 
 mkdir -p ramdisk
 echo "copy user/*.bin to ramdisk."
-cp lab3/*.bin ramdisk/
+# cp lab3/*.bin ramdisk/
+cp lab4/*.bin ramdisk/
 
-cp ../../scripts/kirin970-hikey970.dtb ramdisk/
 cd ramdisk
 find . | cpio -o -Hnewc > ../ramdisk.cpio
 echo "succeed in building ramdisk."

@@ -43,13 +43,11 @@ out_fail:
 	return r;
 }
 
-/* TODO (tmac): hide this interface later */
 int sys_create_pmo(u64 size, u64 type)
 {
 	int cap, r;
 	struct pmobject *pmo;
 
-	kinfo("sys_create_pmo called\n");
 	BUG_ON(size == 0);
 	pmo = obj_alloc(TYPE_PMO, sizeof(*pmo));
 	if (!pmo) {
@@ -93,7 +91,6 @@ int sys_create_pmos(u64 user_buf, u64 cnt)
 		return -EINVAL;
 	}
 
-	/* TODO: can we directly read/write user buffers */
 	size = sizeof(*requests) * cnt;
 	requests = (struct pmo_request *)kmalloc(size);
 	if (requests == NULL) {
@@ -104,10 +101,6 @@ int sys_create_pmos(u64 user_buf, u64 cnt)
 
 	for (i = 0; i < cnt; ++i) {
 		cap = sys_create_pmo(requests[i].size, requests[i].type);
-		/*
-		 * TODO: what if some errors occur (i.e., create part of pmos).
-		 * levave it to user space for now.
-		 */
 		requests[i].ret_cap = cap;
 	}
 
@@ -135,7 +128,6 @@ static int read_write_pmo(u64 pmo_cap, u64 offset, u64 user_buf,
 		goto out_fail;
 	}
 
-	// FIXME: add support for PMO_ANONY
 	/* we only allow writing PMO_DATA now. */
 	if (pmo->type != PMO_DATA) {
 		r = -EINVAL;
@@ -178,7 +170,6 @@ int sys_read_pmo(u64 pmo_cap, u64 offset, u64 user_ptr, u64 len)
 }
 
 
-/* TODO: hide this interface later */
 /*
  * A process can not only map a PMO into its private address space,
  * but also can map a PMO to some others (e.g., load code for others).
@@ -190,7 +181,6 @@ int sys_map_pmo(u64 target_process_cap, u64 pmo_cap, u64 addr, u64 perm)
 	struct process *target_process;
 	int r;
 
-	kinfo("sys_map_pmo called\n");
 	pmo = obj_get(current_process, pmo_cap, TYPE_PMO);
 	if (!pmo) {
 		r = -ECAPBILITY;
@@ -207,9 +197,6 @@ int sys_map_pmo(u64 target_process_cap, u64 pmo_cap, u64 addr, u64 perm)
 	vmspace = obj_get(target_process, VMSPACE_OBJ_ID, TYPE_VMSPACE);
 	BUG_ON(vmspace == NULL);
 
-	// TODO (question): is it required to restrict pmo mapping?
-	// TODO: check wheter perm is legal
-	// TODO: check addr validation
 	r = vmspace_map_range(vmspace, addr, pmo->size, perm, pmo);
 	if (r != 0) {
 		r = -EPERM;
@@ -259,7 +246,6 @@ int sys_map_pmos(u64 target_process_cap, u64 user_buf, u64 cnt)
 		return -EINVAL;
 	}
 
-	/* TODO: can we directly read/write user buffers */
 	size = sizeof(*requests) * cnt;
 	requests = (struct pmo_map_request *)kmalloc(size);
 	if (requests == NULL) {
@@ -277,10 +263,6 @@ int sys_map_pmos(u64 target_process_cap, u64 user_buf, u64 cnt)
 				  requests[i].pmo_cap,
 				  requests[i].addr,
 				  requests[i].perm);
-		/*
-		 * TODO: what if some errors occur (i.e., create part of pmos).
-		 * levave it to user space for now.
-		 */
 		requests[i].ret = ret;
 	}
 
@@ -316,7 +298,6 @@ int sys_unmap_pmo(u64 target_process_cap, u64 pmo_cap, u64 addr)
 		goto fail2;
 	}
 
-	// TODO (question): is it required to restrict pmo mapping?
 	ret = vmspace_unmap_range(vmspace, addr, pmo->size);
 	if (ret != 0)
 		ret = -EPERM;

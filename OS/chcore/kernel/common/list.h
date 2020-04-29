@@ -62,11 +62,6 @@ static inline bool list_empty(struct list_head *head)
 #define list_entry(ptr, type, field) \
 	container_of(ptr, type, field)
 
-#if 0
-#define for_each_node_in_list(node, head) \
-	for (node = iter->next; node != head; node = node->next)
-#endif
-
 #define for_each_in_list(elem, type, field, head) \
 	for (elem = container_of((head)->next, type, field); \
 	     &((elem)->field) != (head); \
@@ -142,27 +137,3 @@ static inline bool hlist_empty(struct hlist_head *head)
 
 #define for_each_in_hlist_safe(elem, tmp, field, head) \
 	__for_each_in_hlist_safe(elem, tmp, typeof (*elem), field, head)
-
-#if 0
-/*
- * We would better not add prints as the dependencies.
- * Too complicated.
- **/
-static inline void kprint_hlist(struct hlist_head *head)
-{
-	struct hlist_node *node;
-
-	kdebug(" ---- hlist: head=%p ---- \n", head);
-	for (node = head->next; node; node = node->next) {
-		kdebug("-> %p\n", node);
-		if (node == node->next) {
-			kdebug("looped list @%p!\n", node);
-			BUG("dead loop");
-		}
-	}
-}
-#else
-static inline void kprint_hlist(struct hlist_head *head)
-{
-}
-#endif

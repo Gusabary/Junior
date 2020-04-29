@@ -22,21 +22,11 @@
 
 /* 00=4KB, 01=16KB, 11=64KB */
 /* Translation granularity, or the page size */
-/**
- * FIXME: WARNING: DOC-CONFLICT:
- * In doc `DDI0487E_a_armv8_arm.pdf`, the values for TG0 are:
- * 10=16KB, 00=4KB, 01=64KB
- * The following values are from doc `DEN0024A_v8_architecture_PG.pdf`.
- */
+
 #define TCR_TG0_4K   (0x0 << 14)
 #define TCR_TG0_16K  (0x1 << 14)
 #define TCR_TG0_64K  (0x3 << 14)
-/**
- * FIXME: WARNING: DOC-CONFLICT:
- * In doc `DDI0487E_a_armv8_arm.pdf`, the values for TG1 are:
- * 01=16KB, 10=4KB, 11=64KB
- * The following values are from doc `DEN0024A_v8_architecture_PG.pdf`.
- */
+
 #define TCR_TG1_4K   (0x0 << 30)
 #define TCR_TG1_16K  (0x1 << 30)
 #define TCR_TG1_64K  (0x3 << 30)

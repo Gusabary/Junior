@@ -63,7 +63,7 @@ def test_mappmo():
 
 @test(5, parent=test_mappmo)
 def test_mappmo_output():
-    r.match("\[INFO\] sys_map_pmo called")
+    r.match("sys_map_pmo called")
     r.match("\[INFO\] sys_exit with value 0")
 
 @test(0, parent=test_mappmo_output)

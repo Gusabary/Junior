@@ -1,5 +1,5 @@
 #include <lib/print.h>
-#include <lib/types.h>
+#include <lib/type.h>
 #include <lib/syscall.h>
 
 #define PMO_SIZE        0x1000

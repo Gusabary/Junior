@@ -66,7 +66,6 @@ void uart_init(void)
 	ra |= 2 << 15;		//alt5
 	put32(BCM2835_GPIO_GPFSEL1, ra);
 	put32(BCM2835_GPIO_GPPUD, 0);
-	//TODO dealy _sleep(0);
 	put32(BCM2835_GPIO_GPPUDCLK0, (1 << 14) | (1 << 15));
 	//_sleep(0);
 	put32(BCM2835_GPIO_GPPUDCLK0, 0);

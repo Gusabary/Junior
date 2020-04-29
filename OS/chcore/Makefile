@@ -3,13 +3,13 @@ ifndef QEMU
 QEMU := qemu-system-aarch64
 endif
 
-LAB := 3
+LAB := 4
 # try to generate a unique GDB port
 GDBPORT	:= 1234
 QEMUOPTS = -machine raspi3 -serial null -serial mon:stdio -m size=1G -kernel $(BUILD_DIR)/kernel.img -gdb tcp::1234
 IMAGES = $(BUILD_DIR)/kernel.img
 
-all: build user
+all: user build
 
 gdb:
 	gdb-multiarch -n -x .gdbinit

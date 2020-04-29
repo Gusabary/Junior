@@ -5,6 +5,7 @@
 extern void el1_mmu_activate(void);
 extern void start_kernel(void *boot_flag);
 extern void init_boot_pt(void);
+extern void secondary_cpu_boot(int cpuid);
 
 /* symbol in linker */
 extern char _edata;

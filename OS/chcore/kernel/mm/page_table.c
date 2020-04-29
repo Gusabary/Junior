@@ -31,7 +31,6 @@ extern void flush_tlb(void);
 
 void set_page_table(paddr_t pgtbl)
 {
-	/* XXX Perf: maybe check whether write ttbr0_el1 is needed */
 	set_ttbr0_el1(pgtbl);
 }
 

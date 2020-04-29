@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <lib/types.h>
+#include <common/types.h>
 
 #define RADIX_NODE_BITS (9)
 #define RADIX_NODE_SIZE (1 << (RADIX_NODE_BITS))

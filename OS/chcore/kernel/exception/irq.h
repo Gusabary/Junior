@@ -12,13 +12,17 @@
 
 #pragma once
 
-#include <lib/types.h>
+#include <common/types.h>
 #include <process/thread.h>
 
-/* TODO: Proper defination of MAX_IRQ_NUM. */
 #define MAX_IRQ_NUM	256
 #define HANDLE_KERNEL	0
 #define HANDLE_USER	1
+extern u8 irq_handle_type[MAX_IRQ_NUM];
 
 void enable_irq(void);
 void disable_irq(void);
+
+void plat_handle_irq(void);
+void plat_disable_timer(void);
+void plat_enable_timer(void);

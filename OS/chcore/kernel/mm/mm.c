@@ -83,8 +83,7 @@ void mm_init(void *info)
 
 	physmem_map_num = 0;
 
-	// TODO: make parse_memory solid
-	/* XXX: only use the last entry (biggest free chunk) */
+	/* only use the last entry (biggest free chunk) */
 	parse_mem_map(info);
 
 	if (physmem_map_num == 1) {

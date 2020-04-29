@@ -10,10 +10,10 @@
  *   See the Mulan PSL v1 for more details.
  */
 
-#include <lib/types.h>
+#include <common/types.h>
 #include <process/thread.h>
 #include <mm/vmspace.h>
-#include <lib/types.h>
+#include <common/types.h>
 #include <lib/errno.h>
 
 #include <common/kprint.h>

@@ -5,7 +5,10 @@ add_library(${PROJECT_NAME}-arch process
     main.c
     monitor.c
     tools.S
+    common/smp.c
     common/uart.c
+    common/lock.c
     common/printk.c
+    common/fs.c
     common/radix.c
 )

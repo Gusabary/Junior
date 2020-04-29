@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <lib/types.h>
+#include <common/types.h>
 #include <lib/errno.h>
 #include <common/list.h>
 

@@ -16,5 +16,6 @@ message(${CMAKE_C_FLAGS})
 
 set(LINK_FLAGS "-static")
 
-add_subdirectory(lab3)
+# add_subdirectory(lab3)
+add_subdirectory(lab4)
 include_directories(".")

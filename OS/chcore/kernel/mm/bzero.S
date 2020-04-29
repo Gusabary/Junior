@@ -11,7 +11,7 @@
  */
 
 /*
- * TODO: borrowed from BSD
+ *  borrowed from BSD
  */
 
 #include <common/asm.h>

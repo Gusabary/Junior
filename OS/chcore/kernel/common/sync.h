@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <lib/types.h>
+#include <common/types.h>
 
 #define COMPILER_BARRIER() asm volatile("":::"memory")
 

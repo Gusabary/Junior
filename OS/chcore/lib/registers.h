@@ -40,8 +40,6 @@
 #define SPSR_EL1_KERNEL             SPSR_EL1_EL1h
 #define SPSR_EL1_USER               SPSR_EL1_EL0t
 
-/* SPSR_ELx TODO */
-
 /* SCTLR_EL1 System Control Register aarch64 (FROM ARM-ARM D12-3081 by LN) */
 
 #define SCTLR_EL1_EnIA              BIT(31)     /* Controls enabling of pointer authentication */

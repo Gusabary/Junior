@@ -1,7 +1,7 @@
 #include <common/asm.h>
 
 #define __ASM__
-#include "../lib/registers.h"
+#include <lib/registers.h>
 #undef __ASM__
 
 #define TCR_T0SZ(x)       ((64 - (x)))
@@ -267,6 +267,7 @@ END_FUNC(invalidate_icache)
 .extern _boot_pgd_down
 .extern _boot_pgd_up
 
+/* The assembly only activates the mmu of the CPU calls it*/
 BEGIN_FUNC(el1_mmu_activate)
     /* We call nested functions, follow the ABI. */
     stp     x29, x30, [sp, #-16]!

@@ -32,8 +32,10 @@
 #define FIQ_EL0_32              14
 #define ERROR_EL0_32            15
 
+#define EL_OF_TYPE(x)           ((int)((x) < 8))
+
 #ifndef __ASM__
-#include <lib/types.h>
+#include <common/types.h>
 
 /* assembly helper functions */
 void set_exception_vector(void);

@@ -13,24 +13,24 @@
 #pragma once
 
 #include <lib/registers.h>
-#include <lib/types.h>
+#include <common/types.h>
 #include <common/list.h>
 #include <common/kprint.h>
 
-// TODO: detect CPU num on boot time
 #include <lib/machine.h>
 
 struct thread;
 
 /* BUDGET represents the number of TICKs */
 #define DEFAULT_BUDGET	2
-#define TICK_MS		1500
+#define TICK_MS		500
 
 #define MAX_PRIO	255
 #define MIN_PRIO	0
 #define PRIO_NUM	(MAX_PRIO + 1)
 
 #define NO_AFF		-1
+#define IS_VALID_AFF(x)	((x) >= -1 && (x) < PLAT_CPU_NUM)
 
 /* Data structures */
 
@@ -73,12 +73,82 @@ struct thread_ctx {
 	/* Executing Context */
 	arch_exec_cont_t ec;
 
+	/* Scheduling Context */
+	sched_cont_t *sc;
+
 	/* Thread Type */
 	u32 type;
+
+	/* Thread state */
+	u32 state;
+
+	/* Priority */
+	u32 prio;
+
+	/* SMP Affinity */
+	s32 affinity;
+
+	/* Current Assigned CPU */
+	u32 cpuid;
 };
+
+/* Debug functions */
+void print_thread(struct thread *thread);
 
 extern char thread_type[][TYPE_STR_LEN];
 extern char thread_state[][STATE_STR_LEN];
 
+void arch_idle_ctx_init(struct thread_ctx *idle_ctx, void (*func)(void));
 u64 switch_context(void);
+int sched_is_runnable(struct thread *target);
+int sched_is_running(struct thread *target);
+int switch_to_thread(struct thread *target);
 
+/* Global-shared kernel data */
+extern struct list_head ready_queue[PLAT_CPU_NUM][PRIO_NUM];
+extern struct thread *current_threads[PLAT_CPU_NUM];
+
+/* Indirect function call may downgrade performance */
+struct sched_ops {
+	int (*sched_init)(void);
+	int (*sched)(void);
+	int (*sched_enqueue)(struct thread * thread);
+	int (*sched_dequeue)(struct thread * thread);
+	struct thread *(*sched_choose_thread)(void);
+	void (*sched_handle_timer_irq)(void);
+	/* Debug tools */
+	void (*sched_top)(void);
+};
+
+/* Provided Scheduling Policies */
+extern struct sched_ops rr;	/* Simple Round Robin */
+
+/* Chosen Scheduling Policies */
+extern struct sched_ops *cur_sched_ops;
+
+int sched_init(struct sched_ops *sched_ops);
+
+static inline int sched(void)
+{
+	return cur_sched_ops->sched();
+}
+
+static inline int sched_enqueue(struct thread *thread)
+{
+	return cur_sched_ops->sched_enqueue(thread);
+}
+
+static inline int sched_dequeue(struct thread *thread)
+{
+	return cur_sched_ops->sched_dequeue(thread);
+}
+
+static inline struct thread *sched_choose_thread(void)
+{
+	return cur_sched_ops->sched_choose_thread();
+}
+
+static inline void sched_handle_timer_irq(void)
+{
+	cur_sched_ops->sched_handle_timer_irq();
+}

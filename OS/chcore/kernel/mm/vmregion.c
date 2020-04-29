@@ -48,7 +48,6 @@ static int check_vmr_intersect(struct vmspace *vmspace,
 	new_start = vmr_to_add->start;
 	new_end = new_start + vmr_to_add->size - 1;
 
-	/* TODO: use safe mode, otherwise, the list may be modified */
 	for_each_in_list(vmr, struct vmregion, node, &(vmspace->vmr_list)) {
 		start = vmr->start;
 		end   = start + vmr->size;
@@ -63,7 +62,6 @@ static int is_vmr_in_vmspace(struct vmspace *vmspace, struct vmregion *vmr)
 {
 	struct vmregion *iter;
 
-	/* TODO: use safe mode, otherwise, the list may be modified */
 	for_each_in_list(iter, struct vmregion, node, &(vmspace->vmr_list)) {
 		if (iter == vmr)
 			return 1;
@@ -93,7 +91,6 @@ struct vmregion *find_vmr_for_va(struct vmspace *vmspace, vaddr_t addr)
 	struct vmregion *vmr;
 	vaddr_t start, end;
 
-	/* TODO: use safe mode, otherwise, the list may be modified */
 	for_each_in_list(vmr, struct vmregion, node, &(vmspace->vmr_list)) {
 		start = vmr->start;
 		end   = start + vmr->size;
@@ -137,8 +134,6 @@ int vmspace_map_range(struct vmspace *vmspace, vaddr_t va, size_t len,
 	vmr->start = va;
 	vmr->size = len;
 	vmr->perm = flags;
-	// TODO: when set pmo to vmr
-	// FIXME: sync size of vmr and pmo
 	vmr->pmo = pmo;
 
 	ret = add_vmr_to_vmspace(vmspace, vmr);
@@ -200,18 +195,15 @@ int vmspace_unmap_range(struct vmspace *vmspace, vaddr_t va, size_t len)
 	start = vmr->start;
 	size  = vmr->size;
 
-	// TODO: check more error here
 	if ((va != start) && (len != size)) {
-		printk("FIXME: we only support unmap a whole vmregion now.\n");
+		printk("we only support unmap a whole vmregion now.\n");
 		BUG_ON(1);
 	}
 
 	del_vmr_from_vmspace(vmspace, vmr);
 
-	// TODO: check if VMO is mapped
 	unmap_range_in_pgtbl(vmspace->pgtbl, va, len);
 
-	// TODO: free physical pages in the VMO
 	return 0;
 }
 
@@ -231,18 +223,6 @@ int vmspace_init(struct vmspace *vmspace)
 	return 0;
 }
 
-#if 0
-struct vmspace *create_vmspace(void)
-{
-	struct vmspace *vmspace;
-
-	vmspace = (struct vmspace *)kmalloc(sizeof(*vmspace));
-	vmspace_init(vmspace);
-	return vmspace;
-}
-#endif
-
-/* TODO: what if one thread invokes exit and another thread is running */
 /* release the resource when a process exits */
 int destroy_vmspace(struct vmspace *vmspace)
 {
@@ -258,16 +238,9 @@ int destroy_vmspace(struct vmspace *vmspace)
 		unmap_range_in_pgtbl(vmspace->pgtbl, start, size);
 	}
 
-	// TODO: when to free page table page
 	kfree(vmspace);
 	return 0;
 }
-
-/*
- * TODO: pmo_deinit:
- *	 - step-1: free physical pages according to the radix
- *	 - step-2: radix_free
- */
 
 /*
  * @paddr is only useful when @type == PMO_DEVICE.

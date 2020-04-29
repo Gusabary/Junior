@@ -2,7 +2,6 @@
 #include "print/uart.h"
 #include "boot.h"
 #include "image.h"
-#include "lib/efi.h"
 
 ALIGN(16) VISIBLE
 char boot_cpu_stack[CONFIG_MAX_NUM_CPUS][BIT(PAGE_BITS)] = { 0 };
@@ -26,4 +25,10 @@ void init_c(void)
 	start_kernel(secondary_boot_flag);
 	
 	printf("[BOOT] Should not be here!\r\n");
+}
+
+void secondary_init_c(int cpuid)
+{
+	el1_mmu_activate();
+	secondary_cpu_boot(cpuid);
 }

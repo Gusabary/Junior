@@ -51,7 +51,7 @@ struct pmobject {
 	paddr_t start;
 	size_t size;
 	pmo_type_t type;
-	atomic_cnt refcnt; // TODO: free this pmo when refcnt is 0
+	atomic_cnt refcnt; 
 
 	// if type == PMO_BACKED
 	struct file_cap *file;

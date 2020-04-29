@@ -21,7 +21,6 @@
  * But, El1 cannot execute EL0 code.
  */
 
-#ifndef FBINFER
 
 int copy_from_user(char *kernel_buf, char *user_buf, size_t size)
 {
@@ -38,5 +37,3 @@ int copy_to_user(char *user_buf, char *kernel_buf, size_t size)
 	memcpy(user_buf, kernel_buf, size);
 	return 0;
 }
-
-#endif

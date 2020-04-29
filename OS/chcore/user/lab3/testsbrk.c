@@ -1,6 +1,6 @@
 #include <lib/syscall.h>
 #include <lib/print.h>
-#include <lib/types.h>
+#include <lib/type.h>
 
 #define ALLOCATE_SIZE 4096
 #define STRING_SIZE	  64

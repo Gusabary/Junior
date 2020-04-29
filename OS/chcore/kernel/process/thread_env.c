@@ -56,7 +56,6 @@ const char PLAT[] = "aarch64";
  * env: stack top address used by kernel
  * top_vaddr: stack top address mapped to user
  */
-// TODO (tmac): fix magic numbers
 void prepare_env(char *env, u64 top_vaddr, struct process_metadata *meta,
 		 char *name)
 {

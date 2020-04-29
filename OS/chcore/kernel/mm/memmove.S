@@ -1,5 +1,5 @@
 /*
- * TODO: borrowed from BSD
+ *  borrowed from BSD
  * Copyright BSD KERNEL
  */
 

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <lib/types.h>
+#include <common/types.h>
 
 /* Spec from https://man.openbsd.org/FreeBSD-12.0/cpio.5 */
 

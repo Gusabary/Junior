@@ -88,11 +88,10 @@ void *obj_alloc(u64 type, u64 size)
 	u64 total_size;
 	struct object *object;
 
-	// XXX: opaque is u64 so sizeof(*object) is 8-byte aligned.
+	// opaque is u64 so sizeof(*object) is 8-byte aligned.
 	//      Thus the address of object-defined data is always 8-byte aligned.
 	total_size = sizeof(*object) + size;
 	object = kmalloc(total_size);
-	/* TODO: errno ecoded in pointer */
 	if (!object)
 		return NULL;
 
@@ -105,7 +104,7 @@ void *obj_alloc(u64 type, u64 size)
 }
 
 /*
- * XXX: obj_free can be used in two conditions:
+ * obj_free can be used in two conditions:
  * 1. In initialization of a cap (after obj_alloc and before cap_aloc) as a
  * fallback to obj_alloc
  * 2. To all slots which point to it. In this use case, the
@@ -323,7 +322,6 @@ int sys_cap_copy_from(u64 src_process_cap, u64 src_slot_id)
 	return r;
 }
 
-#ifndef FBINFER
 int sys_transfer_caps(u64 dest_group_cap, u64 src_caps_buf, int nr_caps,
 		     u64 dst_caps_buf)
 {
@@ -346,7 +344,6 @@ int sys_transfer_caps(u64 dest_group_cap, u64 src_caps_buf, int nr_caps,
 	copy_from_user((void *)src_caps, (void *)src_caps_buf, size);
 
 	for (i = 0; i < nr_caps; ++i) {
-		// TODO: check error
 		dst_caps[i] = cap_copy(current_process, dest_process,
 			     src_caps[i], 0, 0);
 	}
@@ -357,7 +354,6 @@ int sys_transfer_caps(u64 dest_group_cap, u64 src_caps_buf, int nr_caps,
 	obj_put(dest_process);
 	return 0;
 }
-#endif
 
 int sys_cap_move(u64 dest_process_cap, u64 src_slot_id)
 {

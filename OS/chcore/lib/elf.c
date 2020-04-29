@@ -12,11 +12,6 @@
 
 #include <lib/elf.h>
 
-/*
- * TODO(MK): Simplify the duplications in the file.
- */
-
-
 #ifdef CHCORE
 #include <common/kmalloc.h>
 #include <common/kprint.h>

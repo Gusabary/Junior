@@ -58,7 +58,6 @@ static struct radix_node *new_radix_node(void)
 	return n;
 }
 
-#ifndef FBINFER
 int radix_add(struct radix *radix, u64 key, void *value)
 {
 	struct radix_node *node;
@@ -132,7 +131,6 @@ void *radix_get(struct radix *radix, u64 key)
 	return node->values[k];
 }
 
-/* FIXME(MK): We should allow users to store NULL in radix... */
 int radix_del(struct radix *radix, u64 key)
 {
 	return radix_add(radix, key, NULL);
@@ -161,7 +159,6 @@ static void radix_free_node(struct radix_node *node, int node_level,
 		}
 	}
 }
-#endif
 
 int radix_free(struct radix *radix)
 {

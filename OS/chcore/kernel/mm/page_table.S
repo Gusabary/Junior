@@ -84,7 +84,7 @@ BEGIN_FUNC(set_ttbr0_el1)
 END_FUNC(set_ttbr0_el1)
 
 /*
- * TODO: this is a simple implementation for now.
+ * this is a simple implementation for now.
  * Note that tlbi is TLB invalidation instruction and vmalle1is is its arguement.
  * This function can flush all the TLB on all the (inner sharable) cores.
  * Different from x86 architecture, IPI is not required.

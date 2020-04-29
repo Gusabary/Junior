@@ -43,6 +43,8 @@ set(USER_PATH           "${CMAKE_CURRENT_SOURCE_DIR}/user")
 
 
 set(KERNEL_ARCH_PATH        "${KERNEL_PATH}")
+set(KERNEL_TESTS_PATH       "${KERNEL_PATH}/tests")
+set(KERNEL_IPC_PATH         "${KERNEL_PATH}/ipc")
 set(KERNEL_LIB_PATH         "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(KERNEL_SYSCALL_PATH     "${KERNEL_PATH}/syscall")
 set(KERNEL_EXCEPTION_PATH   "${KERNEL_PATH}/exception")
@@ -56,6 +58,8 @@ include_directories("${KERNEL_PATH}")
 
 
 add_subdirectory("${KERNEL_ARCH_PATH}")
+add_subdirectory("${KERNEL_TESTS_PATH}")
+add_subdirectory("${KERNEL_IPC_PATH}")
 add_subdirectory("${KERNEL_LIB_PATH}")
 add_subdirectory("${KERNEL_MM_PATH}")
 add_subdirectory("${KERNEL_PROCESS_PATH}")
@@ -70,6 +74,7 @@ set(init_object
         ${BINARY_KERNEL_IMG_PATH}/${BOOTLOADER_PATH}/mmu.c.o
         ${BINARY_KERNEL_IMG_PATH}/${BOOTLOADER_PATH}/tools.S.o
         ${BINARY_KERNEL_IMG_PATH}/${BOOTLOADER_PATH}/init_c.c.o
+        ${BINARY_KERNEL_IMG_PATH}/${BOOTLOADER_PATH}/smp.c.o
         ${BINARY_KERNEL_IMG_PATH}/${BOOTLOADER_LIB_PATH}/macro.S.o
         ${BINARY_KERNEL_IMG_PATH}/${BOOTLOADER_LIB_PATH}/uart.c.o
         ${BINARY_KERNEL_IMG_PATH}/${BOOTLOADER_LIB_PATH}/printf.c.o"
@@ -85,11 +90,13 @@ include("${BOOTLOADER_PATH}/config.cmake")
 add_executable(kernel.img 
     ${files} ${USER_PATH}/binary_include.S
     $<TARGET_OBJECTS:${PROJECT_NAME}-arch>
+    $<TARGET_OBJECTS:${PROJECT_NAME}-ipc>
     $<TARGET_OBJECTS:${PROJECT_NAME}-lib>
     $<TARGET_OBJECTS:${PROJECT_NAME}-mm>
     $<TARGET_OBJECTS:${PROJECT_NAME}-object>
     $<TARGET_OBJECTS:${PROJECT_NAME}-syscall>
     $<TARGET_OBJECTS:${PROJECT_NAME}-sched>
+    $<TARGET_OBJECTS:${PROJECT_NAME}-tests>
     $<TARGET_OBJECTS:${PROJECT_NAME}-exception>
 )
 
