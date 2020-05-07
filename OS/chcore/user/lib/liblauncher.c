@@ -6,6 +6,7 @@
 #include <lib/bug.h>
 #include <lib/print.h>
 #include <lib/string.h>
+#include <lib/fs_defs.h>
 
 #define VMR_READ  (1 << 0)
 #define VMR_WRITE (1 << 1)
@@ -109,3 +110,53 @@ int readelf_from_kernel_cpio(const char *filename, struct user_elf *user_elf)
 
 	return ret;
 }
+
+ipc_struct_t *tmpfs_ipc_struct;
+
+// read binary file according to pathname stored in `pathbuf` from FS server
+// parse elf from this binary and store it in `user_elf`
+int readelf_from_fs(const char *pathbuf, struct user_elf *user_elf)
+{
+	int ret;
+	int tmpfs_read_pmo_cap;
+	int size = PAGE_SIZE * 10;
+
+	// TODO(Lab5): your code here
+	// prepare shared memory
+	tmpfs_read_pmo_cap = usys_create_pmo(size, PMO_DATA);
+	fail_cond(tmpfs_read_pmo_cap < 0, "usys create_ret ret %d\n",
+		  tmpfs_read_pmo_cap);
+
+	ret = usys_map_pmo(SELF_CAP,
+			   tmpfs_read_pmo_cap,
+			   TMPFS_READ_BUF_VADDR, VM_READ | VM_WRITE);
+	fail_cond(ret < 0, "usys_map_pmo ret %d\n", ret);
+  	
+	// prepare ipc msg
+	ipc_msg_t *ipc_msg;
+	ipc_msg = ipc_create_msg(tmpfs_ipc_struct, sizeof(struct fs_request), 1);
+
+	struct fs_request fr = {
+		.req = FS_REQ_READ,
+		.buff = TMPFS_READ_BUF_VADDR,
+		.offset = 0,
+		.count = size,
+	};
+	memset(fr.path, 0, FS_REQ_PATH_LEN);
+	fr.path[0] = '/';
+	strcpy(fr.path + 1, pathbuf);  // XXX: hacking
+		
+	ipc_set_msg_data(ipc_msg, (char *)&fr, 0, sizeof(struct fs_request));
+	ipc_set_msg_cap(ipc_msg, 0, tmpfs_read_pmo_cap);
+	int count = ipc_call(tmpfs_ipc_struct, ipc_msg);
+
+	ipc_destroy_msg(ipc_msg);
+
+	// parse elf
+	parse_elf_from_binary(fr.buff, user_elf);
+
+	usys_unmap_pmo(SELF_CAP, tmpfs_read_pmo_cap, TMPFS_READ_BUF_VADDR);
+
+	return ret;
+}
+

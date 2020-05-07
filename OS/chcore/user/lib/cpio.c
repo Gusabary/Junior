@@ -5,6 +5,7 @@
 #include <lib/defs.h>
 #include <lib/errno.h>
 #include <lib/string.h>
+#include <lib/malloc.h>
 
 #define kwarn printf
 #define cpio_info(fmt, ...) printf(fmt, ## __VA_ARGS__)
@@ -50,7 +51,6 @@ static int cpio_parse_header(const void *addr, struct cpio_header *header)
 	return 0;
 }
 
-/*
 int cpio_extract_file(const void *addr, const char *dirat)
 {
 	return 0;
@@ -64,8 +64,7 @@ void cpio_init_g_files(void)
 
 static struct cpio_file *cpio_alloc_file(void)
 {
-	BUG("not supported yet");
-	// return cpio_zalloc(sizeof(struct cpio_file));
+	return cpio_zalloc(sizeof(struct cpio_file));
 }
 
 static void cpio_add_file(struct cpio_file *f)
@@ -113,7 +112,6 @@ void cpio_extract(const void *addr, const char *dirat)
 		cpio_add_file(f);
 	}
 }
-*/
 
 void *cpio_extract_single(const void *addr, const char *target,
 			  void *(*cpio_single_file_filler)(const void *start,

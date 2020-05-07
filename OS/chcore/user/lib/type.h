@@ -17,6 +17,10 @@ typedef char bool;
 #define false (0)
 
 typedef u64 size_t;
+typedef long long int ssize_t;
+typedef long long int off_t;
+typedef unsigned char mode_t;
+typedef unsigned long long int ino_t;
 
 struct process_metadata {
 	u64 phdr_addr;

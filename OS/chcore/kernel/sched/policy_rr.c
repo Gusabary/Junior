@@ -41,6 +41,18 @@ struct list_head rr_ready_queue[PLAT_CPU_NUM];
  */
 struct thread idle_threads[PLAT_CPU_NUM];
 
+void sys_print_top(void)
+{
+	for (int i = 0; i < PLAT_CPU_NUM; i++) {
+		// current_threads
+		printk("Thread %lx\n", &current_threads[i]);
+		struct thread *node;
+		for_each_in_list(node, struct thread, ready_queue_node, &(rr_ready_queue[i])) {
+			printk("Thread %lx\n", node);
+		}
+	}
+}
+
 /*
  * Lab 4
  * Sched_enqueue

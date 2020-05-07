@@ -34,6 +34,7 @@
 #define SYS_transfer_caps       105
 
 #define SYS_handle_brk		201
+#define SYS_print_top       202
 
 /* TEMP */
 #define SYS_fs_load_cpio        253
@@ -73,3 +74,5 @@ int usys_map_pmos(u64, void *, u64);
 int usys_write_pmo(u64, u64, void *, u64);
 int usys_read_pmo(u64 cap, u64 offset, void *buf, u64 size);
 int usys_transfer_caps(u64, int *, int, int *);
+
+void usys_print_top(void);

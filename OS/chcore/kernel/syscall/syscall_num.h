@@ -78,6 +78,7 @@ void sys_ipc_return(void);
 
 // #define SYS_arch_prctl                          200
 #define SYS_handle_brk				201
+#define SYS_print_top               202
 
 
 

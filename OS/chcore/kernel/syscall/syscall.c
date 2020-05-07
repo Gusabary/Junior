@@ -18,6 +18,7 @@
 #include <common/mm.h>
 #include <common/kprint.h>
 #include <common/fs.h>
+#include <sched/sched.h>
 #include "syscall_num.h"
 
 void sys_debug(long arg)
@@ -36,7 +37,8 @@ void sys_putc(char ch)
 
 u32 sys_getc(void)
 {
-	return nb_uart_recv();
+	// return nb_uart_recv();
+	return uart_recv();
 }
 
 /* 
@@ -92,5 +94,6 @@ const void *syscall_table[NR_SYSCALL] = {
 	/* TMP FS */
 	[SYS_fs_load_cpio] = sys_fs_load_cpio,
 
-	[SYS_debug] = sys_debug
+	[SYS_debug] = sys_debug,
+	[SYS_print_top] = sys_print_top,
 };

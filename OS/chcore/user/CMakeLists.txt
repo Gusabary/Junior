@@ -19,3 +19,25 @@ set(LINK_FLAGS "-static")
 # add_subdirectory(lab3)
 add_subdirectory(lab4)
 include_directories(".")
+include_directories("lib")
+
+# A special one: the first user process created by the kernel
+file(
+    GLOB
+        init_source_files
+        "apps/init.c"
+        "apps/init_main.c"
+        "lib/*.c"
+)
+add_executable(init.bin ${init_source_files})
+
+file(
+    GLOB
+        init_test_files
+        "apps/init.c"
+        "apps/init_test.c"
+        "lib/*.c"
+)
+add_executable(init_test.bin ${init_test_files})
+
+add_subdirectory(tmpfs)

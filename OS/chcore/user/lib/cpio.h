@@ -63,9 +63,9 @@ struct {
 	struct cpio_file *tail;
 } g_files;
 
-//void cpio_init_g_files(void);
-//int cpio_extract_file(const void *addr, const char *dirat);
-//void cpio_extract(const void *addr, const char *dirat);
+void cpio_init_g_files(void);
+int cpio_extract_file(const void *addr, const char *dirat);
+void cpio_extract(const void *addr, const char *dirat);
 void *cpio_extract_single(const void *addr, const char *target,
 			  void *(*cpio_single_file_filler)(const void *start,
 							   size_t size,

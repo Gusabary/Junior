@@ -21,6 +21,8 @@
 
 struct thread;
 
+void sys_print_top(void);
+
 /* BUDGET represents the number of TICKs */
 #define DEFAULT_BUDGET	2
 #define TICK_MS		500

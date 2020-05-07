@@ -40,7 +40,7 @@ find_id:
 	mul	x1, x8, x1
 	adr 	x0, boot_cpu_stack
 	add	x0, x0, x1
-	add	x0, x1, #0x1000  // add x0, x0, #0x1000 ?
+	add	x0, x0, #0x1000
 	mov	sp, x0
 
 hang:

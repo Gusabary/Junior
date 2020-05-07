@@ -18,3 +18,4 @@ struct info_page {
 int parse_elf_from_binary(const char *binary, struct user_elf *user_elf);
 void *single_file_handler(const void *start, size_t size, void *data);
 int readelf_from_kernel_cpio(const char *filename, struct user_elf *user_elf);
+int readelf_from_fs(const char *pathbuf, struct user_elf *user_elf);
