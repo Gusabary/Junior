@@ -235,6 +235,38 @@ int map_range_in_pgtbl(vaddr_t *pgtbl, vaddr_t va, paddr_t pa,
 
 17. 整体实现思路和 `sys_ipc_call` 类似，只不过不需要对 arg 进行任何处理，直接作为参数传递给 `thread_migrate_to_server` 即可。
 
-##### Last-modified date: 2020.4.29, 6 p.m.
+## Lab 5  File system and Shell
+
+### Exercises
+
+1. 在 `tfs_mknod` 中，先创建一个 inode，再创建一个 dentry 并将其加到 `dir` 的 htable 中。
+
+   在 `tfs_namex` 中，从左向右扫描 `name`，遇到 `/` 时截取下一段调用 `tfs_lookup`，如果没有找到且 `mkdir_p` 为 true，则调用 `tfs_mkdir` 创建目录，如此循环直到扫描到 `name` 末尾。
+
+2. 在 `tfs_file_read` 中，一次读一个页中的内容，如果 `offset + size` 超过了文件的长度就立刻返回。
+
+3. 首先调用 `tfs_namex` 拿到 `dirat` 和 `leaf`，然后根据 `filesize` 是否为 0 判断其为目录还是常规文件，如果是目录就直接 `tfs_mkdir`；如果是常规文件，就要先 `tfs_creat`，然后通过 `tfs_lookup` 拿到新创建的 dentry，最后调用 `tfs_file_write` 写入文件内容。
+
+4. 在 `fs_server_dispatch` 的 switch 语句中根据 `fr->req` 做转发。
+
+   在 `tmpfs_server.c` 相应的函数中调用 `tmpfs.c` 中对应的函数。
+
+5. 在 `getchar` 中调用 `usys_getc`。
+
+   在 `readline` 中反复调用 `getchar` 直到读入回车，每次读入新的字符时将其打印出来。
+
+6. `ls` 需要调用 tmpfs scan，获取目录下的所有目录项，然后将文件名打印出来。
+
+   `echo` 直接将之后的参数打印出来即可。
+
+   `cat` 需要调用 tmpfs read，读取文件的内容并打印。
+
+7. `readelf_from_fs` 的实现类似 `cat`，也是调用 tmpfs read，并在最后调用 `parse_elf_from_binary`
+
+   `run_cmd` 的实现就是先调用 `readelf_from_fs`，再调用 `launch_process_with_pmos_caps`
+
+   补全的实现是先通过 tmpfs scan 获得当前目录下的所有文件，当输入 tab 时，将当前 buf 与所有文件名比较，选择第一个匹配的，如果按下多次 tab，就往后选择相匹配的文件。
+
+##### Last-modified date: 2020.5.7, 5 p.m.
 
  
