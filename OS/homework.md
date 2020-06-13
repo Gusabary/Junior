@@ -170,5 +170,21 @@
 
    可以使用大页，因为微内核场景下上下文切换比较频繁，减少 TLB miss 能有效提升 network server 的性能。
 
-##### Last-modified date: 2020.6.4, 12 p.m.
+## Homework 7
+
+1. 需要 400 个 shadow page table，需要 20 个 stage-2 page table。
+
+2. TLB miss 的时候，stage-2 page table 最多需要进行 24 次访存，性能大大下降。
+
+3. 防止 DMA 恶意读写别的 VM 的内存。
+
+   GPA 和 HPA。SMMU 先将 IOVA 翻译成 GPA，再将 GPA 翻译成 HPA。
+
+4. 安全级别从低到高应该是 container，AWS Firecracker，gVisor，traditional VM。
+
+   AWS Firecracker 保留 KVM，但只实现了运行函数的必要功能；gVisor 是用户态内核，提供与虚拟机相当的强隔离性。
+
+5. 由于微内核的架构，需要在用户态模块中实现 container support（比如增强原有文件系统模块的代码，或者新增一个负责 container support 的模块）。性能上新增模块的话会增加 ipc 的次数，但是因为新增的代码大部分在用户态，所以仍然可以尽可能地保证内核的安全性。
+
+##### Last-modified date: 2020.6.13, 2 p.m.
 
